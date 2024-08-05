@@ -16,15 +16,14 @@ public class DataBase {
 		return c;
 	}
 		
-		public static void insertUser(String name, String surname, String gender, String username, String email, String password, String type) throws SQLException {
+		public static void insertUser(String name, String surname, String username, String email, String password, String type) throws SQLException {
 			Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/donationapp?user=root&password=Ekvator0");
 			Statement st = c.createStatement();
 			
-			String query = "INSERT INTO users(name, surname, gender, username, email, password, type) VALUES (?, ?, ?, ?, ?, ?, ?)";
+			String query = "INSERT INTO users(name, surname, username, email, password, type) VALUES (?, ?, ?, ?, ?, ?)";
 			PreparedStatement ps = c.prepareStatement(query);
 			ps.setString(1, name);
 			ps.setString(2, surname);
-			ps.setString(3, gender);
 			ps.setString(4, username);
 			ps.setString(5, email);
 			ps.setString(6, password);

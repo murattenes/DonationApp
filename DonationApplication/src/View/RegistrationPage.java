@@ -36,13 +36,12 @@ public class RegistrationPage extends JFrame {
 	private JPanel contentPane;
 	private JLabel nameLabel;
 	private JLabel surnameLabel;
-	private JLabel genderLabel;
 	private JLabel usernameLabel;
 	private JLabel emailLabel;
-	private JLabel passwordLabel;
 	private JLabel rePasswordLabel;
-	private JPasswordField rePasswordField;
+	private JLabel passwordLabel;
 	private JPasswordField passwordField;
+	private JPasswordField rePasswordField;
 	private JTextField usernameField;
 	private JTextField surnameField;
 	private JTextField nameField;
@@ -83,28 +82,25 @@ public class RegistrationPage extends JFrame {
 		surnameLabel = new JLabel("Surname:");
 		surnameLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
 		
-		genderLabel = new JLabel("Gender:");
-		genderLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		
 		usernameLabel = new JLabel("Username:");
 		usernameLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
 		
 		emailLabel = new JLabel("E-mail:");
 		emailLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
 		
-		passwordLabel = new JLabel("Password:");
-		passwordLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		
 		rePasswordLabel = new JLabel("Re-enter Password:");
 		rePasswordLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
 		
-		rePasswordField = new JPasswordField();
-		rePasswordField.setColumns(10);
-		rePasswordField.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		passwordLabel = new JLabel("Password:");
+		passwordLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
 		
 		passwordField = new JPasswordField();
-		passwordField.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
 		passwordField.setColumns(10);
+		passwordField.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		
+		rePasswordField = new JPasswordField();
+		rePasswordField.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		rePasswordField.setColumns(10);
 		
 		usernameField = new JTextField();
 		usernameField.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
@@ -122,11 +118,6 @@ public class RegistrationPage extends JFrame {
 		emailField.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
 		emailField.setColumns(10);
 		
-		JComboBox genderComboBox = new JComboBox();
-		genderComboBox.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		genderComboBox.setBackground(new Color(238, 237, 238));
-		genderComboBox.setModel(new DefaultComboBoxModel(new String[] {"", "Male", "Female", "Other"}));
-		
 		
 		JLabel profileTypeLabel = new JLabel("Profile Type:");
 		profileTypeLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
@@ -140,20 +131,20 @@ public class RegistrationPage extends JFrame {
 		joinButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(nameField.getText().length() == 0 || surnameField.getText().length() == 0 || genderComboBox.getSelectedIndex() == 0 || usernameField.getText().length() == 0 ||
-						 emailField.getText().length() == 0 || passwordField.getPassword().length == 0 || rePasswordField.getPassword().length == 0 || typeComboBox.getSelectedIndex() == 0) {
+				if(nameField.getText().length() == 0 || surnameField.getText().length() == 0 || usernameField.getText().length() == 0 ||
+						 emailField.getText().length() == 0 || rePasswordField.getPassword().length == 0 || passwordField.getPassword().length == 0 || typeComboBox.getSelectedIndex() == 0) {
 					 Message.showMsg("fill");
 					 
 					 
 				 }
-				 else if(!Arrays.equals(passwordField.getPassword(), rePasswordField.getPassword())) {
+				 else if(!Arrays.equals(rePasswordField.getPassword(), passwordField.getPassword())) {
 					Message.showMsg("Passwords must be same!");
 		
 					
 				 }
 				 else {
 					try {
-						Admin.addUser(nameField.getText(), surnameField.getText(), genderComboBox.getSelectedItem().toString(), usernameField.getText(), emailField.getText(), new String(passwordField.getPassword()), typeComboBox.getSelectedItem().toString());
+						Admin.addUser(nameField.getText(), surnameField.getText(), usernameField.getText(), emailField.getText(), new String(rePasswordField.getPassword()), typeComboBox.getSelectedItem().toString());
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						System.out.println(e1);
@@ -173,47 +164,43 @@ public class RegistrationPage extends JFrame {
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(nameLabel, GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
+									.addGap(97))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(surnameLabel, GroupLayout.PREFERRED_SIZE, 85, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED))
+								.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+									.addComponent(emailLabel, GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
+									.addGap(95))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(profileTypeLabel, GroupLayout.DEFAULT_SIZE, 108, Short.MAX_VALUE)
+									.addGap(61))
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(usernameLabel)
+									.addPreferredGap(ComponentPlacement.RELATED)))
 							.addGroup(gl_contentPane.createSequentialGroup()
-								.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-									.addComponent(rePasswordLabel, GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
-									.addComponent(passwordLabel, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-								.addPreferredGap(ComponentPlacement.RELATED))
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addComponent(emailLabel, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-								.addGap(90))
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addComponent(usernameLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-								.addGap(90))
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addComponent(surnameLabel, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-								.addGap(97))
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addComponent(nameLabel, GroupLayout.DEFAULT_SIZE, 76, Short.MAX_VALUE)
-								.addGap(97))
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addComponent(genderLabel, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-								.addGap(97)))
+								.addComponent(passwordLabel)
+								.addPreferredGap(ComponentPlacement.RELATED)))
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(profileTypeLabel, GroupLayout.PREFERRED_SIZE, 108, GroupLayout.PREFERRED_SIZE)
-							.addGap(65)))
+							.addComponent(rePasswordLabel)
+							.addPreferredGap(ComponentPlacement.RELATED)))
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addComponent(typeComboBox, GroupLayout.PREFERRED_SIZE, 112, GroupLayout.PREFERRED_SIZE)
-								.addContainerGap(455, Short.MAX_VALUE))
-							.addGroup(gl_contentPane.createSequentialGroup()
-								.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
-									.addComponent(joinButton, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-									.addComponent(genderComboBox, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addComponent(nameField, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
-									.addComponent(surnameField, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
-									.addComponent(usernameField, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
-									.addComponent(passwordField, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
-									.addComponent(rePasswordField, Alignment.LEADING))
-								.addGap(408)))
+						.addComponent(passwordField, GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
+						.addComponent(usernameField, GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
+						.addComponent(nameField, GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
+						.addComponent(surnameField, GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
+						.addComponent(emailField, GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(emailField, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-							.addGap(408))))
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(rePasswordField, GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addComponent(typeComboBox, 0, 112, Short.MAX_VALUE)
+									.addGap(61))
+								.addComponent(joinButton, GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE))))
+					.addGap(398))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -222,37 +209,33 @@ public class RegistrationPage extends JFrame {
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(nameLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addComponent(nameField, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGap(18)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(surnameLabel, GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+						.addComponent(surnameLabel)
 						.addComponent(surnameField, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGap(18)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(genderLabel, GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
-						.addComponent(genderComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(usernameLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(usernameField, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(emailLabel, GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+						.addComponent(emailLabel)
 						.addComponent(emailField, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+					.addGap(18)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(passwordLabel, GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
-						.addComponent(passwordField, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(ComponentPlacement.UNRELATED)
+						.addComponent(usernameLabel)
+						.addComponent(usernameField, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
+					.addGap(18)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(rePasswordLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(rePasswordField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(passwordLabel)
+						.addComponent(passwordField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addGap(18)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(rePasswordField, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
+						.addComponent(rePasswordLabel))
 					.addGap(18)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(profileTypeLabel, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
 						.addComponent(typeComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 					.addGap(18)
-					.addComponent(joinButton, GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
-					.addGap(33))
+					.addComponent(joinButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					.addGap(45))
 		);
 		contentPane.setLayout(gl_contentPane);
 	}

@@ -88,7 +88,6 @@ public class LoginPage extends JFrame {
 						Boolean flag = true;
 						while(rs.next()) {
 							if((usernameField.getText().equals(rs.getString("username")) || usernameField.getText().equals(rs.getString("email"))) && new String(passwordField.getPassword()).equals(rs.getString("password"))){
-								System.out.println("BASARILI");
 								flag = false;
 								break;
 							}

@@ -10,6 +10,7 @@ import javax.swing.border.EmptyBorder;
 
 import Helper.DataBase;
 import Helper.Message;
+import Model.Donor;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -89,7 +90,20 @@ public class LoginPage extends JFrame {
 						while(rs.next()) {
 							if((usernameField.getText().equals(rs.getString("username")) || usernameField.getText().equals(rs.getString("email"))) && new String(passwordField.getPassword()).equals(rs.getString("password"))){
 								flag = false;
-								break;
+								if("Donor".equals(rs.getString("type"))) {
+									Donor d = new Donor(rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("type"));
+									DonorPage p = new DonorPage(d);
+									p.setVisible(true);
+									dispose();
+									break;
+								}
+								else if("Recipient".equals(rs.getString("type"))) {
+									RecipientPage p = new RecipientPage();
+									p.setVisible(true);
+									dispose();
+									break;
+							
+								}
 							}
 							
 						}

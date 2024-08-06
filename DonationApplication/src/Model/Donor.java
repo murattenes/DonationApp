@@ -8,4 +8,8 @@ public class Donor extends User{
 
 	}
 
+	public Donor() {
+		// TODO Auto-generated constructor stub
+	}
+
 }

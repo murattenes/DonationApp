@@ -133,6 +133,9 @@ public class LoginPage extends JFrame {
 				dispose();
 			}
 		});
+		
+		JButton adminLoginButton = new JButton("Admin Login");
+		adminLoginButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -149,20 +152,24 @@ public class LoginPage extends JFrame {
 							.addComponent(passwordLabel, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
 							.addGap(101)))
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(loginButton, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
-						.addComponent(passwordField, Alignment.LEADING)
-						.addComponent(usernameField, Alignment.LEADING))
+						.addComponent(loginButton, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+						.addComponent(passwordField, Alignment.LEADING, 159, 159, 159)
+						.addComponent(usernameField, Alignment.LEADING, 159, 159, 159))
 					.addGap(451))
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(566)
-					.addComponent(registerButton, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(adminLoginButton, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(registerButton, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap(49, Short.MAX_VALUE))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addComponent(welcomeLabel, GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
-					.addGap(147)
+					.addGap(15)
+					.addComponent(adminLoginButton, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
+					.addGap(93)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 						.addComponent(usernameLabel, GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
 						.addComponent(usernameField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))

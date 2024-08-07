@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import Helper.Message;
 import Model.Admin;
 import Model.Donor;
 
@@ -27,6 +28,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JList;
+import javax.swing.AbstractListModel;
 
 public class DonorPage extends JFrame {
 
@@ -141,13 +146,18 @@ public class DonorPage extends JFrame {
 		makeDonationPanel.add(param2ComboBox);
 		
 		JComboBox<?> conditionComboBox = new JComboBox();
-		conditionComboBox.setModel(new DefaultComboBoxModel(new String[] {"", "Barely New", "Good", "Okay"}));
+		conditionComboBox.setModel(new DefaultComboBoxModel(new String[] {"", "New", "Good", "Okay"}));
 		conditionComboBox.setBounds(119, 205, 101, 27);
 		makeDonationPanel.add(conditionComboBox);
 		
 		JComboBox subcategoryComboBox = new JComboBox();
 		subcategoryComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (subcategoryComboBox.getSelectedIndex() < 1) {
+					param1ComboBox.setSelectedIndex(0);
+					param2ComboBox.setSelectedIndex(0);
+					conditionComboBox.setSelectedIndex(0);
+				}
 				if ("Notebook".equals(subcategoryComboBox.getSelectedItem())) {
 					param1ComboBox.setModel(new DefaultComboBoxModel(new String[] {"", "Plaid", "Striped"}));
 					param2ComboBox.setModel(new DefaultComboBoxModel(new String[] {"", "60 pages", "90 pages", "120 pages"}));
@@ -232,13 +242,21 @@ public class DonorPage extends JFrame {
 		donateButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				try {
-					Admin.addDonation(categoryComboBox.getSelectedItem().toString(), subcategoryComboBox.getSelectedItem().toString(), param1ComboBox.getSelectedItem().toString(), param2ComboBox.getSelectedItem().toString(), conditionComboBox.getSelectedItem().toString(), donor.getUsername(), "deneme2");
-					updateDonationsTable();
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				if(categoryComboBox.getSelectedIndex() < 1 || subcategoryComboBox.getSelectedIndex() < 1 || param1ComboBox.getSelectedIndex() < 1 || param2ComboBox.getSelectedIndex() < 1 || conditionComboBox.getSelectedIndex() < 1 ) {
+					Message.showMsg("fill");
+				}else {
+					try {
+						Admin.addDonation(categoryComboBox.getSelectedItem().toString(), subcategoryComboBox.getSelectedItem().toString(), param1ComboBox.getSelectedItem().toString(), param2ComboBox.getSelectedItem().toString(), conditionComboBox.getSelectedItem().toString(), donor.getUsername(), "deneme2");
+						updateDonationsTable();
+						updateMyDonationsTable(donor);
+						Message.showMsg("We got your donation.\n Thank you!");
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
 				}
+				
 			}
 		});
 		donateButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
@@ -274,13 +292,94 @@ public class DonorPage extends JFrame {
 		
 		JPanel profilePanel = new JPanel();
 		tabbedPane.addTab("Profile", null, profilePanel, null);
-		profilePanel.setLayout(null);
 		
-		JLabel lblNewLabel = new JLabel(donor.getName());
-		lblNewLabel.setBounds(0, 0, 254, 58);
-		contentPane.add(lblNewLabel);
+		JLabel profileNameLabel = new JLabel("Name:");
+		profileNameLabel.setBounds(6, 6, 50, 20);
+		profileNameLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		
+		JLabel profileSurnameLabel = new JLabel("Surname:");
+		profileSurnameLabel.setBounds(6, 34, 74, 20);
+		profileSurnameLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		
+		JLabel profileEmailLabel = new JLabel("E-mail:");
+		profileEmailLabel.setBounds(6, 66, 57, 20);
+		profileEmailLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		
+		JLabel profileUsernameLabel = new JLabel("Username:");
+		profileUsernameLabel.setBounds(6, 98, 83, 20);
+		profileUsernameLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		
+		JLabel profileNameLabelD = new JLabel(donor.getName());
+		profileNameLabelD.setBounds(68, 6, donor.getName().length()*10, 20);
+		profileNameLabelD.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		
+		JLabel profileSurnameLabelD = new JLabel(donor.getSurname());
+		profileSurnameLabelD.setBounds(92, 34, donor.getSurname().length()*10, 20);
+		profileSurnameLabelD.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		
+		JLabel profileEmailLabelD = new JLabel(donor.getEmail());
+		profileEmailLabelD.setBounds(75, 66, donor.getEmail().length()*10, 20);
+		profileEmailLabelD.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		
+		JLabel profileUsernameLabelD = new JLabel(donor.getUsername());
+		profileUsernameLabelD.setBounds(101, 98, donor.getUsername().length()*10, 20);
+		profileUsernameLabelD.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		
+		JButton profileChangeInformationsButton = new JButton("Change Informations");
+		profileChangeInformationsButton.setBounds(506, 3, 217, 29);
+		profileChangeInformationsButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				ChangeInfoPage p = new ChangeInfoPage(donor);
+				p.setVisible(true);
+				
+			}
+		});
+		profileChangeInformationsButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		profilePanel.setLayout(null);
+		profilePanel.add(profileNameLabel);
+		profilePanel.add(profileSurnameLabel);
+		profilePanel.add(profileEmailLabel);
+		profilePanel.add(profileUsernameLabel);
+		profilePanel.add(profileNameLabelD);
+		profilePanel.add(profileSurnameLabelD);
+		profilePanel.add(profileEmailLabelD);
+		profilePanel.add(profileUsernameLabelD);
+		profilePanel.add(profileChangeInformationsButton);
+		
+		JButton profileChangePasswordButton = new JButton("Change Password");
+		profileChangePasswordButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		profileChangePasswordButton.setBounds(506, 32, 217, 29);
+		profilePanel.add(profileChangePasswordButton);
+		
+		JList list = new JList();
+		list.setModel(new AbstractListModel() {
+			String[] values = new String[] {"sdsdsd", "sdssdsd", "swww", "dddddd", "dddd"};
+			public int getSize() {
+				return values.length;
+			}
+			public Object getElementAt(int index) {
+				return values[index];
+			}
+		});
+		list.setBounds(250, 196, 172, 97);
+		profilePanel.add(list);
+		
+		JLabel welcomeLabel = new JLabel();
+		welcomeLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		welcomeLabel.setBounds(0, 0, 199, 58);
+		welcomeLabel.setText("Welcome " + donor.getName());
+		contentPane.add(welcomeLabel);
 		
 		JButton logoutButton = new JButton("Logout");
+		logoutButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				LoginPage p = new LoginPage();
+				p.setVisible(true);
+				dispose();
+			}
+		});
 		logoutButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		logoutButton.setBounds(633, 0, 117, 29);
 		contentPane.add(logoutButton);
@@ -293,5 +392,12 @@ public class DonorPage extends JFrame {
 			donationsTablee.addRow(lst.get(i));
 		}
 		
+	}
+	public void updateMyDonationsTable(Donor donor) throws SQLException {
+		myDonationsTablee.setRowCount(0);
+		ArrayList<Object[]> myLst = Admin.getDonationsbyDonor(donor);
+		for (int i = 0; i < Admin.getDonationsbyDonor(donor).size(); i++) {
+			myDonationsTablee.addRow(myLst.get(i));
+		}
 	}
 }

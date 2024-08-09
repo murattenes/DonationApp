@@ -1,0 +1,163 @@
+package View;
+
+import java.awt.EventQueue;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Vector;
+
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import Helper.Message;
+import Model.Admin;
+import Model.User;
+
+import javax.swing.JTabbedPane;
+import javax.swing.JLabel;
+import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.JScrollPane;
+import java.awt.Font;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.JList;
+import javax.swing.AbstractListModel;
+
+public class UserPage extends JFrame {
+
+	private static final long serialVersionUID = 1L;
+	private JPanel contentPane;
+	private DefaultTableModel donationsTablee;
+	private DefaultTableModel myDonationsTablee;
+	static User user = new User();
+	private JTable poolTable;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					UserPage frame = new UserPage(user);
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 * @param d 
+	 * @throws SQLException 
+	 */
+	public UserPage(User user) throws SQLException {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 750, 500);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.setBounds(0, 70, 750, 402);
+		contentPane.add(tabbedPane);
+		
+		JPanel poolPanel = new JPanel();
+		tabbedPane.addTab("Pool", null, poolPanel, null);
+		poolPanel.setLayout(null);
+		
+		DefaultTableModel poolTablee = new DefaultTableModel();
+		String[] columnNames = new String[] {
+			    "No", "Category", "Subcategory", "Feature1", "Feature2", "Condition", 
+			    "Quantity", "Date", "Status", "Donor", "Recipient"};
+		poolTablee.setColumnIdentifiers(columnNames);
+		ArrayList<Object[]> lst = Admin.getDonations();
+		for (Object[] row : lst) {
+			poolTablee.addRow(row);
+		}
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(0, 0, 729, 330);
+		poolPanel.add(scrollPane);
+		poolTable = new JTable(poolTablee);
+		scrollPane.setViewportView(poolTable);
+		poolTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		
+		
+		JLabel welcomeLabel = new JLabel();
+		welcomeLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		welcomeLabel.setBounds(108, 0, 199, 29);
+		welcomeLabel.setText("Welcome " + user.getName());
+		contentPane.add(welcomeLabel);
+		
+		JButton logoutButton = new JButton("Logout");
+		logoutButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				LoginPage p = new LoginPage();
+				p.setVisible(true);
+				dispose();
+			}
+		});
+		logoutButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		logoutButton.setBounds(633, 0, 117, 29);
+		contentPane.add(logoutButton);
+		
+		JLabel photoLabel = new JLabel("PHOTO");
+		photoLabel.setBounds(6, 0, 90, 90);
+		contentPane.add(photoLabel);
+		
+		JButton donateRequestButton = new JButton("Donate/Request");
+		donateRequestButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				DonateRequestPage p = new DonateRequestPage(user);
+				p.setVisible(true);				
+			}
+		});
+		donateRequestButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		donateRequestButton.setBounds(577, 41, 167, 29);
+		contentPane.add(donateRequestButton);
+		
+		JButton profileButton = new JButton("Profile");
+		profileButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				ProfilePage p = new ProfilePage(user);
+				p.setVisible(true);
+			}
+		});
+		profileButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		profileButton.setBounds(108, 29, 117, 29);
+		contentPane.add(profileButton);
+	}
+	
+	public void updateDonationsTable() throws SQLException {
+		donationsTablee.setRowCount(0);
+		ArrayList<Object[]> lst = Admin.getDonations();
+		for (int i = 0; i < Admin.getDonations().size(); i++) {
+			donationsTablee.addRow(lst.get(i));
+		}
+		
+	}
+	public void updateMyDonationsTable(User donor) throws SQLException {
+		myDonationsTablee.setRowCount(0);
+		ArrayList<Object[]> myLst = Admin.getDonationsbyDonor(donor);
+		for (int i = 0; i < Admin.getDonationsbyDonor(donor).size(); i++) {
+			myDonationsTablee.addRow(myLst.get(i));
+		}
+	}
+}

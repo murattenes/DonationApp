@@ -9,7 +9,7 @@ import javax.swing.border.EmptyBorder;
 import Helper.DataBase;
 import Helper.Message;
 import Model.Admin;
-import Model.Donor;
+import Model.User;
 
 import javax.swing.JLabel;
 import java.awt.Font;
@@ -21,6 +21,7 @@ import javax.swing.JToggleButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -95,12 +96,16 @@ public class AdminLoginPage extends JFrame {
 					try {
 						Connection c = con.connect();
 						Statement st = c.createStatement();
-						ResultSet rs = st.executeQuery("SELECT * FROM users WHERE type = admin");
+						String query = "SELECT * FROM users WHERE type = ?";
+						PreparedStatement ps = c.prepareStatement(query);
+						ps.setString(1, "Admin");
+						ResultSet rs = ps.executeQuery();
+						
 						Boolean flag = true;
 						while(rs.next()) {
 							if((usernameField.getText().equals(rs.getString("username")) || usernameField.getText().equals(rs.getString("email"))) && new String(passwordField.getPassword()).equals(rs.getString("password"))){
 								flag = false;
-								Admin admin = new Admin(rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("type"));
+								Admin admin = new Admin(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"));
 								AdminPage p = new AdminPage(admin);
 								p.setVisible(true);
 								dispose();

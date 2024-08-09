@@ -1,92 +1,49 @@
-package View;
+package Helper;
 
-import java.awt.EventQueue;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Vector;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
-
-import Helper.Message;
-import Model.Admin;
-import Model.Donor;
-
-import javax.swing.JTabbedPane;
-import javax.swing.JLabel;
-import javax.swing.JButton;
-import javax.swing.JTable;
-import javax.swing.JScrollPane;
 import java.awt.Font;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JList;
-import javax.swing.AbstractListModel;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
-public class DonorPage extends JFrame {
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
-	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
-	private DefaultTableModel donationsTablee;
-	private DefaultTableModel myDonationsTablee;
-	private JTable donationsTable;
-	static Donor donor = new Donor();
-	private JTable myDonationsTable;
+import Model.Admin;
+import Model.User;
+import View.UserPage;
 
-	/**
-	 * Launch the application.
-	 */
+public class deneme {
+
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					DonorPage frame = new DonorPage(donor);
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
-	 * Create the frame.
-	 * @param d 
-	 * @throws SQLException 
-	 */
-	public DonorPage(Donor donor) throws SQLException {
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 750, 500);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
+		// TODO Auto-generated method stub
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+		LocalDateTime now = LocalDateTime.now();
+		LocalDate nw = LocalDate.now();
+		//System.out.println(now);
 		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(0, 70, 750, 402);
-		contentPane.add(tabbedPane);
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+	    Date date = new Date();  
+	    //System.out.println(formatter.format(date));
+	    
+	    getDonationNumber();
+	    
+	    
 		
-		JPanel poolPanel = new JPanel();
-		tabbedPane.addTab("Pool", null, poolPanel, null);
-		poolPanel.setLayout(null);
-		
-		JScrollPane donationsScrollPane = new JScrollPane();
-		donationsScrollPane.setBounds(0, 0, 729, 356);
-		poolPanel.add(donationsScrollPane);
-		
-		
-		
+	    
+	    
+	    /*
 		donationsTablee = new DefaultTableModel();
 		String[] columnNames = new String[8];
 		columnNames[0] = "Id";
@@ -105,8 +62,12 @@ public class DonorPage extends JFrame {
 		
 		donationsTable = new JTable(donationsTablee);
 		donationsScrollPane.setViewportView(donationsTable);
-		
-		JPanel makeDonationPanel = new JPanel();
+		*/
+	    
+	    
+	    /*
+	    
+	    JPanel makeDonationPanel = new JPanel();
 		tabbedPane.addTab("Make Donation", null, makeDonationPanel, null);
 		makeDonationPanel.setLayout(null);
 		
@@ -238,6 +199,7 @@ public class DonorPage extends JFrame {
 		categoryComboBox.setBounds(119, 5, 101, 27);
 		makeDonationPanel.add(categoryComboBox);
 		
+		
 		JButton donateButton = new JButton("Donate");
 		donateButton.addMouseListener(new MouseAdapter() {
 			@Override
@@ -248,7 +210,7 @@ public class DonorPage extends JFrame {
 					try {
 						Admin.addDonation(categoryComboBox.getSelectedItem().toString(), subcategoryComboBox.getSelectedItem().toString(), param1ComboBox.getSelectedItem().toString(), param2ComboBox.getSelectedItem().toString(), conditionComboBox.getSelectedItem().toString(), donor.getUsername(), "deneme2");
 						updateDonationsTable();
-						updateMyDonationsTable(donor);
+						updateMyDonationsTable(user);
 						Message.showMsg("We got your donation.\n Thank you!");
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
@@ -262,142 +224,51 @@ public class DonorPage extends JFrame {
 		donateButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		donateButton.setBounds(119, 255, 117, 29);
 		makeDonationPanel.add(donateButton);
-			
 		
-		JPanel myDonationsPanel = new JPanel();
-		tabbedPane.addTab("My Donations", null, myDonationsPanel, null);
-		myDonationsPanel.setLayout(null);
-		
-		JScrollPane myDonationsScrollPane = new JScrollPane();
-		myDonationsScrollPane.setBounds(0, 0, 729, 356);
-		myDonationsPanel.add(myDonationsScrollPane);
-		
-		myDonationsTablee = new DefaultTableModel();
-		String[] myColumnNames = new String[7];
-		myColumnNames[0] = "Id";
-		myColumnNames[1] = "Category";
-		myColumnNames[2] = "Subcategory";
-		myColumnNames[3] = "Param1";
-		myColumnNames[4] = "Param2";
-		myColumnNames[5] = "Condition";
-		myColumnNames[6] = "Donor";
-		
-		ArrayList<Object[]> myLst = Admin.getDonationsbyDonor(donor);
-		myDonationsTablee.setColumnIdentifiers(myColumnNames);
-		for (int i = 0; i < Admin.getDonationsbyDonor(donor).size(); i++) {
-			myDonationsTablee.addRow(myLst.get(i));
 		}
-		myDonationsTable = new JTable(myDonationsTablee);
-		myDonationsScrollPane.setViewportView(myDonationsTable);
 		
-		JPanel profilePanel = new JPanel();
-		tabbedPane.addTab("Profile", null, profilePanel, null);
-		
-		JLabel profileNameLabel = new JLabel("Name:");
-		profileNameLabel.setBounds(6, 6, 50, 20);
-		profileNameLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		
-		JLabel profileSurnameLabel = new JLabel("Surname:");
-		profileSurnameLabel.setBounds(6, 34, 74, 20);
-		profileSurnameLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		
-		JLabel profileEmailLabel = new JLabel("E-mail:");
-		profileEmailLabel.setBounds(6, 66, 57, 20);
-		profileEmailLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		
-		JLabel profileUsernameLabel = new JLabel("Username:");
-		profileUsernameLabel.setBounds(6, 98, 83, 20);
-		profileUsernameLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		
-		JLabel profileNameLabelD = new JLabel(donor.getName());
-		profileNameLabelD.setBounds(68, 6, donor.getName().length()*10, 20);
-		profileNameLabelD.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		
-		JLabel profileSurnameLabelD = new JLabel(donor.getSurname());
-		profileSurnameLabelD.setBounds(92, 34, donor.getSurname().length()*10, 20);
-		profileSurnameLabelD.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		
-		JLabel profileEmailLabelD = new JLabel(donor.getEmail());
-		profileEmailLabelD.setBounds(75, 66, donor.getEmail().length()*10, 20);
-		profileEmailLabelD.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		
-		JLabel profileUsernameLabelD = new JLabel(donor.getUsername());
-		profileUsernameLabelD.setBounds(101, 98, donor.getUsername().length()*10, 20);
-		profileUsernameLabelD.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		
-		JButton profileChangeInformationsButton = new JButton("Change Informations");
-		profileChangeInformationsButton.setBounds(506, 3, 217, 29);
-		profileChangeInformationsButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				ChangeInfoPage p = new ChangeInfoPage(donor);
-				p.setVisible(true);
+	*/
+	    /*
+	    if((usernameField.getText().equals(rs.getString("username")) || usernameField.getText().equals(rs.getString("email"))) && 
+				new String(passwordField.getPassword()).equals(rs.getString("password"))) {
+			if("User".equals(rs.getString("typename"))) {
+				if("Active".equals(rs.getString("statusname"))) {
+					User user = new User(rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"));
+					UserPage p = new UserPage(user);
+					p.setVisible(true);
+					dispose();
+					break;
+				}
+				else {
+					Message.showMsg("Since your account isn't active you cannot login :(");
+					break;
+					
+				}
+			}
+			else {
+				Message.showMsg("You have to use admin login page.\nClick the button on the top right.");
+				break;
+			}
 				
-			}
-		});
-		profileChangeInformationsButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		profilePanel.setLayout(null);
-		profilePanel.add(profileNameLabel);
-		profilePanel.add(profileSurnameLabel);
-		profilePanel.add(profileEmailLabel);
-		profilePanel.add(profileUsernameLabel);
-		profilePanel.add(profileNameLabelD);
-		profilePanel.add(profileSurnameLabelD);
-		profilePanel.add(profileEmailLabelD);
-		profilePanel.add(profileUsernameLabelD);
-		profilePanel.add(profileChangeInformationsButton);
-		
-		JButton profileChangePasswordButton = new JButton("Change Password");
-		profileChangePasswordButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		profileChangePasswordButton.setBounds(506, 32, 217, 29);
-		profilePanel.add(profileChangePasswordButton);
-		
-		JList list = new JList();
-		list.setModel(new AbstractListModel() {
-			String[] values = new String[] {"sdsdsd", "sdssdsd", "swww", "dddddd", "dddd"};
-			public int getSize() {
-				return values.length;
-			}
-			public Object getElementAt(int index) {
-				return values[index];
-			}
-		});
-		list.setBounds(250, 196, 172, 97);
-		profilePanel.add(list);
-		
-		JLabel welcomeLabel = new JLabel();
-		welcomeLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		welcomeLabel.setBounds(0, 0, 199, 58);
-		welcomeLabel.setText("Welcome " + donor.getName());
-		contentPane.add(welcomeLabel);
-		
-		JButton logoutButton = new JButton("Logout");
-		logoutButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				LoginPage p = new LoginPage();
-				p.setVisible(true);
-				dispose();
-			}
-		});
-		logoutButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		logoutButton.setBounds(633, 0, 117, 29);
-		contentPane.add(logoutButton);
+		}
+		*/
+	    
+	    
+	    
+	
+	
+	
 	}
 	
-	public void updateDonationsTable() throws SQLException {
-		donationsTablee.setRowCount(0);
-		ArrayList<Object[]> lst = Admin.getDonations();
-		for (int i = 0; i < Admin.getDonations().size(); i++) {
-			donationsTablee.addRow(lst.get(i));
-		}
+	public static void getDonationNumber() {
+		int donationNumber;
 		
-	}
-	public void updateMyDonationsTable(Donor donor) throws SQLException {
-		myDonationsTablee.setRowCount(0);
-		ArrayList<Object[]> myLst = Admin.getDonationsbyDonor(donor);
-		for (int i = 0; i < Admin.getDonationsbyDonor(donor).size(); i++) {
-			myDonationsTablee.addRow(myLst.get(i));
-		}
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+		LocalDateTime time = LocalDateTime.now();
+		
+		
+		
+		
+		System.out.println(dtf.format(time));
 	}
 }

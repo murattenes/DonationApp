@@ -10,14 +10,18 @@ import javax.swing.border.EmptyBorder;
 
 import Helper.DataBase;
 import Helper.Message;
-import Model.Donor;
+import Model.Admin;
+import Model.User;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public class LoginPage extends JFrame {
 
@@ -83,38 +87,82 @@ public class LoginPage extends JFrame {
 				} else {
 					
 					try {
+						//CONNECT TO DB
 						Connection c = con.connect();
 						Statement st = c.createStatement();
-						ResultSet rs = st.executeQuery("SELECT * FROM users");
-						Boolean flag = true;
+						String query = "SELECT users.*, " +
+	                               "user_types.typename, user_status.statusname " +
+	                               "FROM users " +
+	                               "INNER JOIN user_types ON users.type = user_types.id " +
+	                               "INNER JOIN user_status ON users.status = user_status.id ";
+						ResultSet rs = st.executeQuery(query);
+						boolean userFound = false;
 						while(rs.next()) {
-							if((usernameField.getText().equals(rs.getString("username")) || usernameField.getText().equals(rs.getString("email"))) && new String(passwordField.getPassword()).equals(rs.getString("password"))){
-								flag = false;
-								if("Donor".equals(rs.getString("type"))) {
-									Donor d = new Donor(rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("type"));
-									DonorPage p = new DonorPage(d);
-									p.setVisible(true);
-									dispose();
-									break;
-								}
-								else if("Recipient".equals(rs.getString("type"))) {
-									RecipientPage p = new RecipientPage();
-									p.setVisible(true);
-									dispose();
-									break;
+							//USER'S DATAS
+							String inputUsername = usernameField.getText();
+					        String inputPassword = new String(passwordField.getPassword());
+					        
+					        Integer dbUserId = rs.getInt("id");
+					        String dbUsername = rs.getString("username");
+					        String dbEmail = rs.getString("email");
+					        String dbPassword = rs.getString("password");
+					        String userType = rs.getString("typename");
+					        String userStatus = rs.getString("statusname");
+					     
+					        if ((inputUsername.equals(dbUsername) || inputUsername.equals(dbEmail)) && inputPassword.equals(dbPassword)) {
+					            userFound = true;
+					            
+					            
+					            if ("User".equals(userType)) {
+					                
+					                
+					                if ("Active".equals(userStatus)) {
+					                	//UPDATE LAST LOGIN
+					                	String updateQuery = "UPDATE users SET lastLogin = ? WHERE id = ?";
+					                	PreparedStatement ps = c.prepareStatement(updateQuery);
+					                	LocalDateTime time = LocalDateTime.now();
+					                	ps.setTimestamp(1, Timestamp.valueOf(time));
+					                	ps.setInt(2, dbUserId);
+					                	ps.executeUpdate();
+					                	ps.close();
+					                	
+					                	
+					                	//LOGIN
+					                    User user = new User(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"));
+					                    UserPage p = new UserPage(user);
+					                    p.setVisible(true);
+					                    dispose();
+					                    break;
+					                    
+					                } else {
+					                    Message.showMsg("Since your account isn't active, you cannot log in :(");
+					                    break;
+					                }
+					                
+					            } else {
+					                Message.showMsg("You have to use the admin login page.\nClick the button on the top right.");
+					                break;
+					            }
+					        }
 							
-								}
-							}
 							
 						}
-						if (flag) {
-							Message.showMsg("Wrong username/email or password!");
-						}
+						if (!userFound) {
+					        Message.showMsg("Incorrect username/email or password.");
+					    }
+					
+						
+						st.close();
+						rs.close();
+						c.close();
+						
 						
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+					
+					
 					
 				}
 				

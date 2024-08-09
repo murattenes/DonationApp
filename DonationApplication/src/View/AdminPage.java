@@ -13,6 +13,7 @@ public class AdminPage extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	static Admin admin;
+	
 
 	/**
 	 * Launch the application.

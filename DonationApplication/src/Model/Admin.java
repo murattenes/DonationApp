@@ -173,29 +173,92 @@ public class Admin extends User{
 		
 		Connection c = con.connect();
 		Statement st = c.createStatement();
-		String query = "SELECT donations.*, " + "donation_status.statusname, donation_categories.categoryname " +
-				   "FROM donations " + 
-				   "INNER JOIN donation_status ON donations.status = donation_status.id " + 
-				   "INNER JOIN donation_categories ON donations.category = donation_categories.id " +
-				   "WHERE  donations.donor = ?";
+		String query = "SELECT donations.*, donation_status.statusname, donation_categories.categoryname, " +
+					   "users.username FROM donations " + 
+					   "INNER JOIN donation_status ON donations.status = donation_status.id " +
+				       "INNER JOIN donation_categories ON donations.category = donation_categories.id " +
+					   "INNER JOIN users ON donations.donor = users.id " +
+				       "WHERE users.id = ?" ;
 		PreparedStatement ps = c.prepareStatement(query);
-		ps.setString(1, user.getUsername());
+		ps.setInt(1, user.getId());
 		
-		
-		ResultSet rs = st.executeQuery(query);
+		ResultSet rs = ps.executeQuery();
 		while(rs.next()) {
-			Object[] items = new Object[7];
-			items[0] = rs.getInt("id");
-			items[1] = rs.getString("category");
+			Object[] items = new Object[10];
+			items[0] = rs.getLong("number");
+			items[1] = rs.getString("categoryname");
 			items[2] = rs.getString("subcategory");
 			items[3] = rs.getString("param1");
 			items[4] = rs.getString("param2");
 			items[5] = rs.getString("condition");
-			items[6] = rs.getString("donor");
+			items[6] = rs.getInt("quantity");
+			items[7] = rs.getDate("donationDate");
+			items[8] = rs.getString("statusname");
+			items[9] = rs.getString("username");
 			
 			list.add(items);
 		}		
 		return list;
+	}
+	
+	
+	
+	public static ArrayList<Object[]> getRequestsbyDonor(User user) throws SQLException{
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
+
+		
+		
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		String query = "SELECT donations.*, donation_status.statusname, donation_categories.categoryname, " +
+					   "users.username FROM donations " + 
+					   "INNER JOIN donation_status ON donations.status = donation_status.id " +
+				       "INNER JOIN donation_categories ON donations.category = donation_categories.id " +
+					   "INNER JOIN users ON donations.recipient = users.id " +
+				       "WHERE users.id = ?" ;
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setInt(1, user.getId());
+		
+		ResultSet rs = ps.executeQuery();
+		while(rs.next()) {
+			Object[] items = new Object[10];
+			items[0] = rs.getLong("number");
+			items[1] = rs.getString("categoryname");
+			items[2] = rs.getString("subcategory");
+			items[3] = rs.getString("param1");
+			items[4] = rs.getString("param2");
+			items[5] = rs.getString("condition");
+			items[6] = rs.getInt("quantity");
+			items[7] = rs.getDate("donationDate");
+			items[8] = rs.getString("statusname");
+			items[9] = rs.getString("username");
+			
+			list.add(items);
+		}		
+		return list;
+	}
+	
+	public static void completeItem(Long number) throws SQLException {
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		
+		String query = "UPDATE donations SET donations.status = ? WHERE donations.number = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setInt(1, 3);
+		ps.setLong(2, number);
+		ps.executeUpdate();
+		
+	}
+	public static void cancelItem(Long number) throws SQLException {
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		
+		String query = "UPDATE donations SET donations.status = ? WHERE donations.number = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setInt(1, 4);
+		ps.setLong(2, number);
+		ps.executeUpdate();
+		
 	}
 	
 	

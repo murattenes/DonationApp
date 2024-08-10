@@ -13,6 +13,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 import Helper.Message;
+import Helper.NonEditableTableModel;
 import Model.Admin;
 import Model.User;
 
@@ -32,6 +33,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JList;
 import javax.swing.AbstractListModel;
+import javax.swing.ListSelectionModel;
 
 public class UserPage extends JFrame {
 
@@ -63,6 +65,8 @@ public class UserPage extends JFrame {
 	 * @param d 
 	 * @throws SQLException 
 	 */
+	
+	
 	public UserPage(User user) throws SQLException {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 750, 500);
@@ -78,9 +82,8 @@ public class UserPage extends JFrame {
 		
 		JPanel poolPanel = new JPanel();
 		tabbedPane.addTab("Pool", null, poolPanel, null);
-		poolPanel.setLayout(null);
 		
-		DefaultTableModel poolTablee = new DefaultTableModel();
+		DefaultTableModel poolTablee = new NonEditableTableModel();
 		String[] columnNames = new String[] {
 			    "No", "Category", "Subcategory", "Feature1", "Feature2", "Condition", 
 			    "Quantity", "Date", "Status", "Donor", "Recipient"};
@@ -89,12 +92,19 @@ public class UserPage extends JFrame {
 		for (Object[] row : lst) {
 			poolTablee.addRow(row);
 		}
+		poolPanel.setLayout(null);
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBounds(0, 0, 729, 330);
 		poolPanel.add(scrollPane);
 		poolTable = new JTable(poolTablee);
+		poolTable.setFocusable(false);
 		scrollPane.setViewportView(poolTable);
 		poolTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		
+		JButton donateButton = new JButton("Donate");
+		donateButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		donateButton.setBounds(0, 327, 102, 29);
+		poolPanel.add(donateButton);
 		
 		
 		JLabel welcomeLabel = new JLabel();
@@ -136,8 +146,15 @@ public class UserPage extends JFrame {
 		profileButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				ProfilePage p = new ProfilePage(user);
-				p.setVisible(true);
+				ProfilePage p;
+				try {
+					p = new ProfilePage(user);
+					p.setVisible(true);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
 			}
 		});
 		profileButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));

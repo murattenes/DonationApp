@@ -34,7 +34,9 @@ public class ProfilePage extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	static User user = new User();
+	private DefaultTableModel myDonationsTablee;
 	private JTable myDonationsTable;
+	private DefaultTableModel myRequestsTablee;
 	private JTable myRequestsTable;
 	static DataBase con = new DataBase();
 	/**
@@ -97,7 +99,7 @@ public class ProfilePage extends JFrame {
 		tabbedPane.addTab("My Donations", null, myDonationsPanel, null);
 		myDonationsPanel.setLayout(null);
 		
-		DefaultTableModel myDonationsTablee = new NonEditableTableModel();
+		myDonationsTablee = new NonEditableTableModel();
 		String[] columnNamesDonation = new String[] {
 			    "No", "Category", "Subcategory", "Feature1", "Feature2", "Condition", 
 			    "Quantity", "Date", "Status", "Donor"};
@@ -123,7 +125,7 @@ public class ProfilePage extends JFrame {
 		scrollPane_1.setBounds(0, 0, 579, 277);
 		myRequestsPanel.add(scrollPane_1);
 		
-		DefaultTableModel myRequestsTablee = new NonEditableTableModel();
+		myRequestsTablee = new NonEditableTableModel();
 		String[] columnNamesRequest = new String[] {
 			    "No", "Category", "Subcategory", "Feature1", "Feature2", "Condition", 
 			    "Quantity", "Date", "Status", "Recipient"};
@@ -148,6 +150,7 @@ public class ProfilePage extends JFrame {
 						Long nmb = (Long) myDonationsTable.getValueAt(row, 0);
 						try {
 							Admin.completeItem(nmb);
+							updateMyDonationsTable();
 							Message.showMsg("Donation completed.");
 						} catch (SQLException e1) {
 							// TODO Auto-generated catch block
@@ -168,6 +171,7 @@ public class ProfilePage extends JFrame {
 						Long nmb = (Long) myRequestsTable.getValueAt(row, 0);
 						try {
 							Admin.completeItem(nmb);
+							updateMyRequestsTable();
 							Message.showMsg("Donation completed.");
 						} catch (SQLException e1) {
 							// TODO Auto-generated catch block
@@ -198,6 +202,7 @@ public class ProfilePage extends JFrame {
 						Long nmb = (Long) myDonationsTable.getValueAt(row, 0);
 						try {
 							Admin.cancelItem(nmb);
+							updateMyDonationsTable();
 							Message.showMsg("Donation canceled.");
 						} catch (SQLException e1) {
 							// TODO Auto-generated catch block
@@ -218,6 +223,7 @@ public class ProfilePage extends JFrame {
 						Long nmb = (Long) myRequestsTable.getValueAt(row, 0);
 						try {
 							Admin.cancelItem(nmb);
+							updateMyRequestsTable();
 							Message.showMsg("Donation canceled.");
 						} catch (SQLException e1) {
 							// TODO Auto-generated catch block
@@ -248,4 +254,23 @@ public class ProfilePage extends JFrame {
 		dyanimcEmailLabel.setSize(user.getEmail().length() * 10, 20);
 		contentPane.add(dyanimcEmailLabel);
 	}
+	public void updateMyDonationsTable() throws SQLException {
+		NonEditableTableModel clear = (NonEditableTableModel) myDonationsTable.getModel();
+		clear.setRowCount(0);
+		ArrayList<Object[]> lst = Admin.getDonationsbyDonor(user);
+		for (Object[] row : lst) {
+			myDonationsTablee.addRow(row);
+		}
+	}
+	public void updateMyRequestsTable() throws SQLException {
+		NonEditableTableModel clear = (NonEditableTableModel) myRequestsTable.getModel();
+		clear.setRowCount(0);
+		ArrayList<Object[]> lst = Admin.getRequestsbyDonor(user);
+		for (Object[] row : lst) {
+			myRequestsTablee.addRow(row);
+		}
+	}
+	
+	
 }
+

@@ -274,9 +274,7 @@ public class DonateRequestPage extends JFrame {
 		requestButton.setBounds(200, 307, 125, 29);
 		contentPane.add(requestButton);
 		
-		
-		
-		
+	
 		
 	}
 }

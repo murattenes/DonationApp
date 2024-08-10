@@ -39,7 +39,7 @@ public class UserPage extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	private DefaultTableModel donationsTablee;
+	private DefaultTableModel poolTablee;
 	private DefaultTableModel myDonationsTablee;
 	static User user = new User();
 	private JTable poolTable;
@@ -83,7 +83,7 @@ public class UserPage extends JFrame {
 		JPanel poolPanel = new JPanel();
 		tabbedPane.addTab("Pool", null, poolPanel, null);
 		
-		DefaultTableModel poolTablee = new NonEditableTableModel();
+		poolTablee = new NonEditableTableModel();
 		String[] columnNames = new String[] {
 			    "No", "Category", "Subcategory", "Feature1", "Feature2", "Condition", 
 			    "Quantity", "Date", "Status", "Donor", "Recipient"};
@@ -100,11 +100,6 @@ public class UserPage extends JFrame {
 		poolTable.setFocusable(false);
 		scrollPane.setViewportView(poolTable);
 		poolTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		
-		JButton donateButton = new JButton("Donate");
-		donateButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		donateButton.setBounds(0, 327, 102, 29);
-		poolPanel.add(donateButton);
 		
 		
 		JLabel welcomeLabel = new JLabel();
@@ -160,21 +155,37 @@ public class UserPage extends JFrame {
 		profileButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		profileButton.setBounds(108, 29, 117, 29);
 		contentPane.add(profileButton);
+		
+		
+		JButton donateButton = new JButton("Donate");
+		donateButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		donateButton.setBounds(0, 327, 102, 29);
+		poolPanel.add(donateButton);
+		
+		JButton refreshButton = new JButton("Refresh");
+		refreshButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				try {
+					updatePool();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		refreshButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		refreshButton.setBounds(627, 328, 102, 29);
+		poolPanel.add(refreshButton);
 	}
 	
-	public void updateDonationsTable() throws SQLException {
-		donationsTablee.setRowCount(0);
+	public void updatePool() throws SQLException {
+		NonEditableTableModel clear = (NonEditableTableModel) poolTable.getModel();
+		clear.setRowCount(0);
 		ArrayList<Object[]> lst = Admin.getDonations();
-		for (int i = 0; i < Admin.getDonations().size(); i++) {
-			donationsTablee.addRow(lst.get(i));
+		for (Object[] row : lst) {
+			poolTablee.addRow(row);
 		}
 		
-	}
-	public void updateMyDonationsTable(User donor) throws SQLException {
-		myDonationsTablee.setRowCount(0);
-		ArrayList<Object[]> myLst = Admin.getDonationsbyDonor(donor);
-		for (int i = 0; i < Admin.getDonationsbyDonor(donor).size(); i++) {
-			myDonationsTablee.addRow(myLst.get(i));
-		}
 	}
 }

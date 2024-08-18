@@ -20,8 +20,8 @@ public class Admin extends User{
 	
 	
 
-	public Admin(int id, String name, String surname, String username, String email, String password) {
-		super(id, name, surname, username, email, password);
+	public Admin(int id, String name, String surname, String username, String email, String password, String address) {
+		super(id, name, surname, username, email, password, address);
 	}
 	public Admin() {
 		
@@ -38,11 +38,11 @@ public class Admin extends User{
 	
 	
 	
-	public static void addUser(String name, String surname, String username, String email, String password) throws SQLException {
+	public static void addUser(String name, String surname, String username, String email, String password, String address) throws SQLException {
 		Connection c = con.connect();
 		Statement st = c.createStatement();
 		
-		String query = "INSERT INTO users(name, surname, username, email, password, type, status, registrationDate, lastLogin) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String query = "INSERT INTO users(name, surname, username, email, password, type, status, registrationDate, lastLogin, address) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		PreparedStatement ps = c.prepareStatement(query);
 		
 		ps.setString(1, name);
@@ -53,9 +53,11 @@ public class Admin extends User{
 		ps.setInt(6, 2);
 		ps.setInt(7, 1);
 		
+		
 		LocalDateTime time = LocalDateTime.now();
 		ps.setTimestamp(8, Timestamp.valueOf(time));
 		ps.setTimestamp(9, null);
+		ps.setString(10, address);
 		
 		
 		ps.executeUpdate();
@@ -92,6 +94,34 @@ public class Admin extends User{
 		c.close();
 		
 	}
+	public static void addToFromDonation(int category, String subcategory, String param1, String param2, String condition, int quantity, Integer donor, Integer recipient ) throws SQLException {
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		
+		String query = "INSERT INTO donations(number, category, subcategory, param1, param2, `condition`, quantity, status, donationDate, donor, recipient) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		PreparedStatement ps = c.prepareStatement(query);
+		
+		
+		ps.setLong(1, getDonationNumber());
+		ps.setInt(2, category);
+		ps.setString(3, subcategory);
+		ps.setString(4, param1);
+		ps.setString(5, param2);
+		ps.setString(6, condition);
+		ps.setInt(7, quantity);
+		ps.setInt(8, 3);
+		
+		LocalDateTime time = LocalDateTime.now();
+		ps.setTimestamp(9, Timestamp.valueOf(time));
+		ps.setInt(10, donor);
+		ps.setInt(11, recipient);
+		
+		
+		ps.executeUpdate();
+		ps.close();
+		c.close();
+		
+	}
 	public static void requestDonation(int category, String subcategory, String param1, String param2, String condition, int quantity, Integer donor, Integer recipient ) throws SQLException {
 		Connection c = con.connect();
 		Statement st = c.createStatement();
@@ -118,6 +148,34 @@ public class Admin extends User{
 		ps.close();
 		c.close();
 		
+	}
+	public static Donation getDonationbyNumber(Long number) throws SQLException{
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		String query = "SELECT donations.* FROM donations WHERE donations.number = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setLong(1, number);
+		ResultSet rs = ps.executeQuery();
+		
+		while(rs.next()) {
+			Long nmb = rs.getLong("number");
+			int category = rs.getInt("category");
+			String subCategory = rs.getString("subcategory");
+			String param1 = rs.getString("param1");
+			String param2 = rs.getString("param2");
+			String condition = rs.getString("condition");
+			int quantity = rs.getInt("quantity");
+			Date date = rs.getDate("donationDate");
+			int status = rs.getInt("status");
+			int donor = rs.getInt("donor");
+			int recipient = rs.getInt("recipient");
+			
+			Donation d = new Donation(nmb, category, subCategory, param1, param2, condition, quantity, status, donor, recipient);
+			return d;
+		}
+
+	return null;	
+
 	}
 	
 	public static ArrayList<Object[]> getDonations() throws SQLException {
@@ -256,6 +314,29 @@ public class Admin extends User{
 		String query = "UPDATE donations SET donations.status = ? WHERE donations.number = ?";
 		PreparedStatement ps = c.prepareStatement(query);
 		ps.setInt(1, 4);
+		ps.setLong(2, number);
+		ps.executeUpdate();
+		
+	}
+	public static void inProgressItem(Long number) throws SQLException {
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		
+		String query = "UPDATE donations SET donations.status = ? WHERE donations.number = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setInt(1, 2);
+		ps.setLong(2, number);
+		ps.executeUpdate();
+		
+	}
+	
+	public static void editDonation(int quantity, Long number) throws SQLException {
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		
+		String query = "UPDATE donations SET donations.quantity = ? WHERE donations.number = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setInt(1, quantity);
 		ps.setLong(2, number);
 		ps.executeUpdate();
 		

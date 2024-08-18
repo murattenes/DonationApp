@@ -11,12 +11,13 @@ public class User{
 	private String username;
 	private String email;
 	private String password;
+	private String address;
 	static DataBase con = new DataBase();
 	
 	
 	
 
-	public User(Integer id, String name, String surname, String username, String email, String password) {
+	public User(Integer id, String name, String surname, String username, String email, String password, String address) {
 		
 		super();
 		User.id = id;
@@ -25,6 +26,7 @@ public class User{
 		this.username = username;
 		this.email = email;
 		this.password = password;
+		this.address = address;
 	}
 
 
@@ -95,6 +97,18 @@ public class User{
 
 	public String getPassword() {
 		return password;
+	}
+	
+	
+	public String getAddress() {
+		return address;
+	}
+
+
+
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 

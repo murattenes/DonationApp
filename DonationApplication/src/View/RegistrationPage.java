@@ -48,6 +48,7 @@ public class RegistrationPage extends JFrame {
 	private JTextField nameField;
 	private JButton joinButton;
 	private JTextField emailField;
+	private JTextField addressTextField;
 
 	/**
 	 * Launch the application.
@@ -124,7 +125,7 @@ public class RegistrationPage extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if(nameField.getText().length() == 0 || surnameField.getText().length() == 0 || usernameField.getText().length() == 0 ||
-						 emailField.getText().length() == 0 || rePasswordField.getPassword().length == 0 || passwordField.getPassword().length == 0) {
+						 emailField.getText().length() == 0 || rePasswordField.getPassword().length == 0 || passwordField.getPassword().length == 0 || addressTextField.getText().length() == 0) {
 					 Message.showMsg("fill");
 					 
 					 
@@ -136,7 +137,7 @@ public class RegistrationPage extends JFrame {
 				 }
 				 else {
 					try {
-						Admin.addUser(nameField.getText(), surnameField.getText(), usernameField.getText(), emailField.getText(), new String(passwordField.getPassword()));
+						Admin.addUser(nameField.getText(), surnameField.getText(), usernameField.getText(), emailField.getText(), new String(passwordField.getPassword()), addressTextField.getText());
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						System.out.println(e1);
@@ -160,6 +161,13 @@ public class RegistrationPage extends JFrame {
 		});
 		backToLoginPageButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		
+		JLabel addressLabel = new JLabel("Address:");
+		addressLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		
+		addressTextField = new JTextField();
+		addressTextField.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		addressTextField.setColumns(10);
+		
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
@@ -181,13 +189,18 @@ public class RegistrationPage extends JFrame {
 						.addComponent(emailField, GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
 						.addGroup(gl_contentPane.createSequentialGroup()
 							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(joinButton, GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
-								.addComponent(rePasswordField, GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE))))
+							.addComponent(rePasswordField, GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)))
 					.addGap(398))
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap(514, Short.MAX_VALUE)
 					.addComponent(backToLoginPageButton))
+				.addGroup(Alignment.LEADING, gl_contentPane.createSequentialGroup()
+					.addComponent(addressLabel, GroupLayout.PREFERRED_SIZE, 152, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+						.addComponent(joinButton, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(addressTextField, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE))
+					.addGap(397))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
@@ -218,8 +231,12 @@ public class RegistrationPage extends JFrame {
 						.addComponent(rePasswordField, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
 						.addComponent(rePasswordLabel))
 					.addGap(18)
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+						.addComponent(addressLabel, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
+						.addComponent(addressTextField, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
+					.addGap(18)
 					.addComponent(joinButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-					.addGap(90))
+					.addGap(42))
 		);
 		contentPane.setLayout(gl_contentPane);
 	}

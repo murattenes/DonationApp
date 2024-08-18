@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.NumberFormatter;
 
 import Helper.Message;
 import Model.Admin;
@@ -210,6 +211,8 @@ public class DonateRequestPage extends JFrame {
 		JSpinner quantitySpinner = new JSpinner();
 		quantitySpinner.setModel(model);
 		quantitySpinner.setBounds(119, 254, 69, 26);
+		JFormattedTextField txt = ((JSpinner.NumberEditor) quantitySpinner.getEditor()).getTextField();
+		((NumberFormatter) txt.getFormatter()).setAllowsInvalid(false);
 		contentPane.add(quantitySpinner);
 		
 		JButton donateButton = new JButton("DONATE");
@@ -229,6 +232,7 @@ public class DonateRequestPage extends JFrame {
 					try {
 						Admin.addDonation(donCategory, donSubcategory, donParam1, donParam2, donCondition, donQuantity, user.getId(), (Integer) null);
 						Message.showMsg("We got your donation.");
+						categoryComboBox.setSelectedIndex(0);
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -261,6 +265,8 @@ public class DonateRequestPage extends JFrame {
 					try {
 						Admin.requestDonation(donCategory, donSubcategory, donParam1, donParam2, donCondition, donQuantity, (Integer) null, user.getId());
 						Message.showMsg("We got your request.");
+						categoryComboBox.setSelectedIndex(0);
+						
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();

@@ -128,7 +128,7 @@ public class LoginPage extends JFrame {
 					                	
 					                	
 					                	//LOGIN
-					                    User user = new User(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"));
+					                    User user = new User(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("address"));
 					                    UserPage p = new UserPage(user);
 					                    p.setVisible(true);
 					                    dispose();

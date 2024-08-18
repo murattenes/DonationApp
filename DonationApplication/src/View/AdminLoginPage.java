@@ -105,7 +105,7 @@ public class AdminLoginPage extends JFrame {
 						while(rs.next()) {
 							if((usernameField.getText().equals(rs.getString("username")) || usernameField.getText().equals(rs.getString("email"))) && new String(passwordField.getPassword()).equals(rs.getString("password"))){
 								flag = false;
-								Admin admin = new Admin(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"));
+								Admin admin = new Admin(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("address"));
 								AdminPage p = new AdminPage(admin);
 								p.setVisible(true);
 								dispose();

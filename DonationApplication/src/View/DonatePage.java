@@ -88,13 +88,13 @@ public class DonatePage extends JFrame {
 					}
 					else if(spinnerValue < donation.getQuantity()) {
 						Admin.addToFromDonation(donation.getCategory(), donation.getSubCategory(), donation.getParam1(), donation.getParam2(), donation.getCondition(), spinnerValue, user.getId(), donation.getRecipient());
-						Admin.editDonation(quantity - spinnerValue, number);
+						Admin.editDonationQuantity(quantity - spinnerValue, number);
 						Admin.inProgressItem(number);
 						dispose();
 					}
 					else if(spinnerValue == donation.getQuantity()) {
 						Admin.addToFromDonation(donation.getCategory(), donation.getSubCategory(), donation.getParam1(), donation.getParam2(), donation.getCondition(), spinnerValue, user.getId(), donation.getRecipient());
-						Admin.editDonation(quantity - spinnerValue, number);
+						Admin.editDonationQuantity(quantity - spinnerValue, number);
 						Admin.completeItem(number);
 						dispose();
 					}

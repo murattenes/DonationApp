@@ -91,13 +91,13 @@ public class GetPage extends JFrame {
 					}
 					else if (spinnerValue < donation.getQuantity()) {
 						Admin.addToFromDonation(donation.getCategory(), donation.getSubCategory(), donation.getParam1(), donation.getParam2(), donation.getCondition(), spinnerValue, donation.getDonor(), user.getId());
-						Admin.editDonation(quantity - spinnerValue, number);
+						Admin.editDonationQuantity(quantity - spinnerValue, number);
 						Admin.inProgressItem(number);
 						dispose();
 					}
-					else if (spinnerValue < donation.getQuantity()) {
+					else if (spinnerValue == donation.getQuantity()) {
 						Admin.addToFromDonation(donation.getCategory(), donation.getSubCategory(), donation.getParam1(), donation.getParam2(), donation.getCondition(), spinnerValue, donation.getDonor(), user.getId());
-						Admin.editDonation(quantity - spinnerValue, number);
+						Admin.editDonationQuantity(quantity - spinnerValue, number);
 						Admin.completeItem(number);
 						dispose();
 					}

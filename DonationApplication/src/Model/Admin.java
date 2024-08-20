@@ -177,6 +177,50 @@ public class Admin extends User{
 	return null;	
 
 	}
+	public static ArrayList<Object[]> getAllDonations() throws SQLException {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
+				
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		String query = "SELECT donations.*, " +
+				       "donation_status.statusname, " +
+				       "donation_categories.categoryname, " + 
+				       "donor_user.username AS donorname, " + 
+				       "recipient_user.username AS recipientname " +
+				       "FROM donations " +
+				       "INNER JOIN donation_status ON donations.status = donation_status.id " +
+				       "INNER JOIN donation_categories ON donations.category = donation_categories.id " +
+				       "LEFT JOIN users AS donor_user ON donations.donor = donor_user.id " +
+				       "LEFT JOIN users AS recipient_user ON donations.recipient = recipient_user.id ";
+			
+		
+		ResultSet rs = st.executeQuery(query);
+
+		while(rs.next()) {
+			Object[] items = new Object[11];
+			items[0] = rs.getLong("number");
+			items[1] = rs.getString("categoryname");
+			items[2] = rs.getString("subcategory");
+			items[3] = rs.getString("param1");
+			items[4] = rs.getString("param2");
+			items[5] = rs.getString("condition");
+			items[6] = rs.getInt("quantity");
+			items[7] = rs.getDate("donationDate");
+			items[8] = rs.getString("statusname");
+			items[9] = rs.getString("donorname");
+			items[10] = rs.getString("recipientname");
+			
+			
+			list.add(items);
+
+		}
+		
+		rs.close();
+	    st.close();
+	    c.close();
+
+		return list;
+	}
 	
 	public static ArrayList<Object[]> getDonations() throws SQLException {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
@@ -296,6 +340,17 @@ public class Admin extends User{
 		return list;
 	}
 	
+	public static void activeItem(Long number) throws SQLException {
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		
+		String query = "UPDATE donations SET donations.status = ? WHERE donations.number = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setInt(1, 1);
+		ps.setLong(2, number);
+		ps.executeUpdate();
+		
+	}
 	public static void completeItem(Long number) throws SQLException {
 		Connection c = con.connect();
 		Statement st = c.createStatement();
@@ -330,7 +385,7 @@ public class Admin extends User{
 		
 	}
 	
-	public static void editDonation(int quantity, Long number) throws SQLException {
+	public static void editDonationQuantity(int quantity, Long number) throws SQLException {
 		Connection c = con.connect();
 		Statement st = c.createStatement();
 		
@@ -339,6 +394,96 @@ public class Admin extends User{
 		ps.setInt(1, quantity);
 		ps.setLong(2, number);
 		ps.executeUpdate();
+		
+	}
+	
+	public static ArrayList<Object[]> getAllUsers() throws SQLException {
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
+
+		
+		
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		String query = "SELECT users.*, user_types.typename, user_status.statusname "+
+					   "FROM users "+
+					   "INNER JOIN user_types ON users.type = user_types.id "+
+					   "INNER JOIN user_status ON users.status = user_status.id";
+		PreparedStatement ps = c.prepareStatement(query);
+		ResultSet rs = ps.executeQuery();
+		
+		while(rs.next()) {
+			Object[] items = new Object[11];
+			items[0] = rs.getString("name");
+			items[1] = rs.getString("surname");
+			items[2] = rs.getString("username");
+			items[3] = rs.getString("email");
+			items[4] = rs.getString("typename");
+			items[5] = rs.getString("statusname");
+			items[6] = rs.getString("address");
+			items[7] = rs.getString("registrationDate");
+			items[8] = rs.getString("lastLogin");
+
+			
+			String secondQuery = "SELECT donations.* FROM donations WHERE donations.status = 3 AND donations.donor = ?";
+			PreparedStatement secondPs = c.prepareStatement(secondQuery);
+			secondPs.setInt(1, rs.getInt("id"));
+			
+			ResultSet secondRs = secondPs.executeQuery();
+			int secondSize = 0;
+			while(secondRs.next()) {
+				secondSize ++;
+			}
+			secondPs.close();
+			secondRs.close();
+			items[9] = secondSize;
+			
+			String thirdQuery = "SELECT donations.* FROM donations WHERE donations.status = 3 AND donations.recipient = ?";
+			PreparedStatement thirdPs = c.prepareStatement(thirdQuery);
+			thirdPs.setInt(1, rs.getInt("id"));
+			
+			ResultSet thirdRs = thirdPs.executeQuery();
+			int thirdSize = 0;
+			while(thirdRs.next()) {
+				thirdSize ++;
+			}
+			thirdPs.close();
+			thirdRs.close();
+			items[10] = thirdSize;
+			
+			
+			list.add(items);
+
+		}
+		ps.close();
+		rs.close();
+		
+		return list;
+	}
+	
+	public static void makeInactiveUser(String username) throws SQLException {
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		
+		String query = "UPDATE users SET users.status = 2 WHERE users.username = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setString(1, username);
+		ps.executeUpdate();
+		
+		ps.close();
+		c.close();
+		
+	}
+	public static void makeActiveUser(String username) throws SQLException {
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		
+		String query = "UPDATE users SET users.status = 1 WHERE users.username = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setString(1, username);
+		ps.executeUpdate();
+		
+		ps.close();
+		c.close();
 		
 	}
 	

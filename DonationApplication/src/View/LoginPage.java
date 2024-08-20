@@ -116,7 +116,7 @@ public class LoginPage extends JFrame {
 					            if ("User".equals(userType)) {
 					                
 					                
-					                if ("Active".equals(userStatus)) {
+					                if ("Inactive".equals(userStatus)) {
 					                	//UPDATE LAST LOGIN
 					                	String updateQuery = "UPDATE users SET lastLogin = ? WHERE id = ?";
 					                	PreparedStatement ps = c.prepareStatement(updateQuery);
@@ -183,7 +183,21 @@ public class LoginPage extends JFrame {
 		});
 		
 		JButton adminLoginButton = new JButton("Admin Login");
+		adminLoginButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				AdminLoginPage p = new AdminLoginPage();
+				p.setVisible(true);
+				dispose();
+			}
+		});
 		adminLoginButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		
+		
+		
+		
+		
+		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)

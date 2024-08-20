@@ -25,12 +25,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 public class AdminLoginPage extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
-	static Admin admin;
 	private JTextField usernameField;
 	private JPasswordField passwordField;
 	DataBase con = new DataBase();
@@ -42,7 +43,7 @@ public class AdminLoginPage extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					AdminLoginPage frame = new AdminLoginPage(admin);
+					AdminLoginPage frame = new AdminLoginPage();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -54,7 +55,7 @@ public class AdminLoginPage extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public AdminLoginPage(Admin admin) {
+	public AdminLoginPage() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 750, 500);
 		contentPane = new JPanel();
@@ -89,38 +90,80 @@ public class AdminLoginPage extends JFrame {
 		loginButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(usernameField.getText().length() == 0 || passwordField.getPassword().length == 0) {
-					 Message.showMsg("fill"); 	 
-				} else {
-					
-					try {
-						Connection c = con.connect();
-						Statement st = c.createStatement();
-						String query = "SELECT * FROM users WHERE type = ?";
-						PreparedStatement ps = c.prepareStatement(query);
-						ps.setString(1, "Admin");
-						ResultSet rs = ps.executeQuery();
+				try {
+					//CONNECT TO DB
+					Connection c = con.connect();
+					Statement st = c.createStatement();
+					String query = "SELECT users.*, " +
+                               "user_types.typename, user_status.statusname " +
+                               "FROM users " +
+                               "INNER JOIN user_types ON users.type = user_types.id " +
+                               "INNER JOIN user_status ON users.status = user_status.id ";
+					ResultSet rs = st.executeQuery(query);
+					boolean userFound = false;
+					while(rs.next()) {
+						//USER'S DATAS
+						String inputUsername = usernameField.getText();
+				        String inputPassword = new String(passwordField.getPassword());
+				        
+				        Integer dbUserId = rs.getInt("id");
+				        String dbUsername = rs.getString("username");
+				        String dbEmail = rs.getString("email");
+				        String dbPassword = rs.getString("password");
+				        String userType = rs.getString("typename");
+				        String userStatus = rs.getString("statusname");
+				     
+				        if ((inputUsername.equals(dbUsername) || inputUsername.equals(dbEmail)) && inputPassword.equals(dbPassword)) {
+				            userFound = true;
+				            
+				            
+				            if ("Admin".equals(userType)) {
+				                
+				                
+				                if ("Active".equals(userStatus)) {
+				                	//UPDATE LAST LOGIN
+				                	String updateQuery = "UPDATE users SET lastLogin = ? WHERE id = ?";
+				                	PreparedStatement ps = c.prepareStatement(updateQuery);
+				                	LocalDateTime time = LocalDateTime.now();
+				                	ps.setTimestamp(1, Timestamp.valueOf(time));
+				                	ps.setInt(2, dbUserId);
+				                	ps.executeUpdate();
+				                	ps.close();
+				                	
+				                	
+				                	//LOGIN
+				                    Admin user = new Admin(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("address"));
+				                    AdminPage p = new AdminPage(user);
+				                    p.setVisible(true);
+				                    dispose();
+				                    break;
+				                    
+				                } else {
+				                    Message.showMsg("Since your account isn't active, you cannot log in :(");
+				                    break;
+				                }
+				                
+				            } else {
+				                Message.showMsg("You have to use the user login page.\nClick the button on the bottom right.");
+				                break;
+				            }
+				        }
 						
-						Boolean flag = true;
-						while(rs.next()) {
-							if((usernameField.getText().equals(rs.getString("username")) || usernameField.getText().equals(rs.getString("email"))) && new String(passwordField.getPassword()).equals(rs.getString("password"))){
-								flag = false;
-								Admin admin = new Admin(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("address"));
-								AdminPage p = new AdminPage(admin);
-								p.setVisible(true);
-								dispose();
-							}
-							
-						}
-						if (flag) {
-							Message.showMsg("Wrong username/email or password!");
-						}
 						
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
 					}
+					if (!userFound) {
+				        Message.showMsg("Incorrect username/email or password.");
+				    }
+				
 					
+					st.close();
+					rs.close();
+					c.close();
+					
+					
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 			}
 		});

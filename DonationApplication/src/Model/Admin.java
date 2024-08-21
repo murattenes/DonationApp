@@ -10,10 +10,14 @@ import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Date;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 
 public class Admin extends User{
@@ -231,7 +235,8 @@ public class Admin extends User{
 				       "donation_status.statusname, " +
 				       "donation_categories.categoryname, " + 
 				       "donor_user.username AS donorname, " + 
-				       "recipient_user.username AS recipientname " +
+				       "recipient_user.username AS recipientname, " +
+				       "COALESCE(donor_user.address, recipient_user.address) AS address " +
 				       "FROM donations " +
 				       "INNER JOIN donation_status ON donations.status = donation_status.id " +
 				       "INNER JOIN donation_categories ON donations.category = donation_categories.id " +
@@ -243,7 +248,7 @@ public class Admin extends User{
 		ResultSet rs = st.executeQuery(query);
 
 		while(rs.next()) {
-			Object[] items = new Object[11];
+			Object[] items = new Object[12];
 			items[0] = rs.getLong("number");
 			items[1] = rs.getString("categoryname");
 			items[2] = rs.getString("subcategory");
@@ -255,6 +260,7 @@ public class Admin extends User{
 			items[8] = rs.getString("statusname");
 			items[9] = rs.getString("donorname");
 			items[10] = rs.getString("recipientname");
+			items[11] = rs.getString("address");
 			
 			
 			list.add(items);
@@ -397,7 +403,7 @@ public class Admin extends User{
 		
 	}
 	
-	public static ArrayList<Object[]> getAllUsers() throws SQLException {
+	public static ArrayList<Object[]> getAllUsers() throws SQLException, ParseException {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 
 		
@@ -421,7 +427,30 @@ public class Admin extends User{
 			items[5] = rs.getString("statusname");
 			items[6] = rs.getString("address");
 			items[7] = rs.getString("registrationDate");
-			items[8] = rs.getString("lastLogin");
+			
+			Timestamp lastLoginTimestamp = rs.getTimestamp("lastLogin");
+			LocalDateTime lastLogin = lastLoginTimestamp.toLocalDateTime();
+			LocalDateTime now = LocalDateTime.now();
+			Duration duration = Duration.between(lastLogin, now);
+			
+			long seconds = duration.getSeconds();
+	        long minutes = duration.toMinutes();
+	        long hours = duration.toHours();
+	        long days = duration.toDays();
+	        Period period = Period.between(lastLogin.toLocalDate(), now.toLocalDate());
+	        int months = period.getYears() * 12 + period.getMonths();
+			
+	        if (seconds < 60) {
+	            items[8] = seconds + " minutes ago";
+	        } else if (minutes < 60) {
+	        	items[8] = minutes + " minutes ago";
+	        } else if (hours < 24) {
+	        	items[8] = hours + " hours ago";
+	        } else if (days < 30) {
+	        	items[8] = days + " days ago";
+	        } else {
+	        	items[8] = months + " months ago";
+	        }
 
 			
 			String secondQuery = "SELECT donations.* FROM donations WHERE donations.status = 3 AND donations.donor = ?";
@@ -486,6 +515,25 @@ public class Admin extends User{
 		c.close();
 		
 	}
+	
+	public static ArrayList<String> getUsernames() throws SQLException {
+		ArrayList<String> lst = new ArrayList<String>();
+		
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		String query = "SELECT users.username FROM users";
+		ResultSet rs = st.executeQuery(query);
+		
+		while(rs.next()){
+			lst.add(rs.getString("username"));
+		}
+		st.close();
+		c.close();
+		return lst;
+		
+	}
+	
+	
 	
 	
 }

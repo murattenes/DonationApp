@@ -116,7 +116,7 @@ public class LoginPage extends JFrame {
 					            if ("User".equals(userType)) {
 					                
 					                
-					                if ("Inactive".equals(userStatus)) {
+					                if ("Active".equals(userStatus)) {
 					                	//UPDATE LAST LOGIN
 					                	String updateQuery = "UPDATE users SET lastLogin = ? WHERE id = ?";
 					                	PreparedStatement ps = c.prepareStatement(updateQuery);

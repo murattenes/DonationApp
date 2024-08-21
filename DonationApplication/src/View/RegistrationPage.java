@@ -27,6 +27,7 @@ import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -124,28 +125,46 @@ public class RegistrationPage extends JFrame {
 		joinButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(nameField.getText().length() == 0 || surnameField.getText().length() == 0 || usernameField.getText().length() == 0 ||
-						 emailField.getText().length() == 0 || rePasswordField.getPassword().length == 0 || passwordField.getPassword().length == 0 || addressTextField.getText().length() == 0) {
-					 Message.showMsg("fill");
-					 
-					 
-				 }
-				 else if(!Arrays.equals(rePasswordField.getPassword(), passwordField.getPassword())) {
-					Message.showMsg("Passwords must be same!");
-		
-					
-				 }
-				 else {
-					try {
-						Admin.addUser(nameField.getText(), surnameField.getText(), usernameField.getText(), emailField.getText(), new String(passwordField.getPassword()), addressTextField.getText());
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						System.out.println(e1);
+				try {
+					Boolean flag = false;
+					ArrayList<String> lst = Admin.getUsernames();
+					for(String str:lst) {
+						if(usernameField.getText().equals(str)) {
+							flag = true;
+						}
 					}
-					LoginPage page = new LoginPage();
-					page.setVisible(true);
-					dispose();
-				 }
+					if(nameField.getText().length() == 0 || surnameField.getText().length() == 0 || usernameField.getText().length() == 0 ||
+							 emailField.getText().length() == 0 || rePasswordField.getPassword().length == 0 || passwordField.getPassword().length == 0 || addressTextField.getText().length() == 0) {
+						 Message.showMsg("fill");
+						 
+						 
+					 }
+					 else if(!Arrays.equals(rePasswordField.getPassword(), passwordField.getPassword())) {
+						Message.showMsg("Passwords must be same!");
+			
+						
+					 }
+					 else if(flag) {
+						 Message.showMsg("This username already exist.");
+					 }
+					 
+					 else {
+						try {
+							Admin.addUser(nameField.getText(), surnameField.getText(), usernameField.getText(), emailField.getText(), new String(passwordField.getPassword()), addressTextField.getText());
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							System.out.println(e1);
+						}
+						LoginPage page = new LoginPage();
+						page.setVisible(true);
+						dispose();
+					 }
+					
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				
 			}
 		});
 		joinButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));

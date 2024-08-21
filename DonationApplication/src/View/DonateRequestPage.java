@@ -30,6 +30,8 @@ import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 
 import javax.swing.JSpinner;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class DonateRequestPage extends JFrame {
 
@@ -46,6 +48,7 @@ public class DonateRequestPage extends JFrame {
 				try {
 					DonateRequestPage frame = new DonateRequestPage(user);
 					frame.setVisible(true);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -58,6 +61,12 @@ public class DonateRequestPage extends JFrame {
 	 * @param user 
 	 */
 	public DonateRequestPage(User user) {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				UserPage.donateRequestControl = true;
+			}
+		});
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 600, 450);
 		contentPane = new JPanel();

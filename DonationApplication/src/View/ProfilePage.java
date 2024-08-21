@@ -30,6 +30,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Canvas;
+import java.awt.Color;
 
 public class ProfilePage extends JFrame {
 
@@ -283,7 +285,5 @@ public class ProfilePage extends JFrame {
 			myRequestsTablee.addRow(row);
 		}
 	}
-	
-	
 }
 

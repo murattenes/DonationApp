@@ -36,6 +36,8 @@ import javax.swing.JList;
 import javax.swing.AbstractListModel;
 import javax.swing.ListSelectionModel;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class UserPage extends JFrame {
 
@@ -45,6 +47,7 @@ public class UserPage extends JFrame {
 	private DefaultTableModel myDonationsTablee;
 	static User user = new User();
 	private JTable poolTable;
+	public static Boolean donateRequestControl;
 
 	/**
 	 * Launch the application.
@@ -70,6 +73,13 @@ public class UserPage extends JFrame {
 	
 	
 	public UserPage(User user) throws SQLException {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowOpened(WindowEvent e) {
+				UserPage.donateRequestControl = true;
+			}
+		});
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 750);
 		contentPane = new JPanel();
@@ -85,7 +95,7 @@ public class UserPage extends JFrame {
 		poolTablee = new NonEditableTableModel();
 		String[] columnNames = new String[] {
 			    "No", "Category", "Subcategory", "Feature1", "Feature2", "Condition", 
-			    "Quantity", "Date", "Status", "Donor", "Recipient"};
+			    "Quantity", "Date", "Status", "Donor", "Recipient", "Address"};
 		poolTablee.setColumnIdentifiers(columnNames);
 		ArrayList<Object[]> lst = Admin.getDonations();
 		for (Object[] row : lst) {
@@ -122,8 +132,14 @@ public class UserPage extends JFrame {
 		donateRequestButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				DonateRequestPage p = new DonateRequestPage(user);
-				p.setVisible(true);				
+				if(UserPage.donateRequestControl) {
+					DonateRequestPage p = new DonateRequestPage(user);
+					p.setVisible(true);
+					UserPage.donateRequestControl = false;
+				}
+				
+				
+								
 			}
 		});
 		donateRequestButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));

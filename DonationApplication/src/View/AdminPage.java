@@ -13,6 +13,7 @@ import Model.Admin;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import javax.swing.JTabbedPane;
@@ -23,6 +24,8 @@ import javax.swing.JButton;
 import javax.swing.JSeparator;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 public class AdminPage extends JFrame {
 
@@ -33,7 +36,8 @@ public class AdminPage extends JFrame {
 	private DefaultTableModel usersTablee;
 	private JTable donationsTable;
 	private JTable usersTable;
-	private JTextField textField;
+	private JTextField dynamicUsernameTextField;
+	private JTextField dynamicNoTextField;
 
 	
 	
@@ -57,8 +61,9 @@ public class AdminPage extends JFrame {
 	/**
 	 * Create the frame.
 	 * @throws SQLException 
+	 * @throws ParseException 
 	 */
-	public AdminPage(Admin admin) throws SQLException {
+	public AdminPage(Admin admin) throws SQLException, ParseException {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 750);
 		contentPane = new JPanel();
@@ -82,6 +87,25 @@ public class AdminPage extends JFrame {
 		tabbedPane.setBounds(0, 106, 1000, 616);
 		contentPane.add(tabbedPane);
 		
+		JPanel donationsPanel = new JPanel();
+		tabbedPane.addTab("All Donations", null, donationsPanel, null);
+		donationsPanel.setLayout(null);
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(0, 0, 979, 535);
+		donationsPanel.add(scrollPane);
+		
+		
+		
+		dynamicNoTextField = new JTextField();
+		dynamicNoTextField.setEnabled(false);
+		dynamicNoTextField.setEditable(false);
+		dynamicNoTextField.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		dynamicNoTextField.setBounds(0, 538, 130, 26);
+		donationsPanel.add(dynamicNoTextField);
+		dynamicNoTextField.setColumns(10);
+		
+		
 		donationsTablee = new NonEditableTableModel();
 		String[] donationsColumnNames = new String[] {
 			    "No", "Category", "Subcategory", "Feature1", "Feature2", "Condition", 
@@ -92,17 +116,63 @@ public class AdminPage extends JFrame {
 			donationsTablee.addRow(row);
 		}
 		
-		JPanel donationsPanel = new JPanel();
-		tabbedPane.addTab("All Donations", null, donationsPanel, null);
-		donationsPanel.setLayout(null);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(0, 0, 979, 570);
-		donationsPanel.add(scrollPane);
+
 		
 		donationsTable = new JTable(donationsTablee);
 		donationsTable.setFocusable(false);
+		donationsTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row = donationsTable.getSelectedRow();
+				if(row > -1) {
+					Long no = (Long) donationsTable.getValueAt(row, 0);
+					dynamicNoTextField.setText(no + "");
+				}
+				
+			}
+		});
 		scrollPane.setViewportView(donationsTable);
+		
+		
+		JButton completeButton = new JButton("Complete");
+		completeButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row = donationsTable.getSelectedRow();
+				if(row > -1) {
+					Long number = (Long) donationsTable.getValueAt(row, 0);
+					try {
+						Admin.completeItem(number);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
+		completeButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		completeButton.setBounds(142, 539, 121, 29);
+		donationsPanel.add(completeButton);
+		
+		JButton cancelButton = new JButton("Cancel");
+		cancelButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row = donationsTable.getSelectedRow();
+				if(row > -1) {
+					Long number = (Long) donationsTable.getValueAt(row, 0);
+					try {
+						Admin.cancelItem(number);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+		});
+		cancelButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		cancelButton.setBounds(275, 539, 121, 29);
+		donationsPanel.add(cancelButton);
 		
 		JPanel usersPanel = new JPanel();
 		tabbedPane.addTab("All users", null, usersPanel, null);
@@ -111,6 +181,15 @@ public class AdminPage extends JFrame {
 		JScrollPane scrollPane_1 = new JScrollPane();
 		scrollPane_1.setBounds(0, 0, 979, 535);
 		usersPanel.add(scrollPane_1);
+		
+		dynamicUsernameTextField = new JTextField();
+		dynamicUsernameTextField.setEnabled(false);
+		dynamicUsernameTextField.setEditable(false);
+		dynamicUsernameTextField.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		dynamicUsernameTextField.setBounds(0, 538, 130, 26);
+		usersPanel.add(dynamicUsernameTextField);
+		dynamicUsernameTextField.setColumns(10);
+		
 		
 		usersTablee = new NonEditableTableModel();
 		String[] usersColumnNames = new String[] {
@@ -121,16 +200,22 @@ public class AdminPage extends JFrame {
 			usersTablee.addRow(row);
 		}
 		usersTable = new JTable(usersTablee);
+		usersTable.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row = usersTable.getSelectedRow();
+				if(row > -1) {
+					String txt = (String) usersTable.getValueAt(row, 2);
+					dynamicUsernameTextField.setText(txt);
+				}
+				
+			}
+		});
 		usersTable.setFocusable(false);
 		scrollPane_1.setViewportView(usersTable);
 		
-		textField = new JTextField();
-		textField.setEditable(false);
-		textField.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		textField.setBounds(0, 538, 130, 26);
-		usersPanel.add(textField);
-		textField.setColumns(10);
 		
+
 		
 		JButton inactiveButton = new JButton("Make Inactive");
 		inactiveButton.addMouseListener(new MouseAdapter() {

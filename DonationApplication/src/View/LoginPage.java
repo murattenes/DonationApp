@@ -40,6 +40,7 @@ public class LoginPage extends JFrame {
 				try {
 					LoginPage frame = new LoginPage();
 					frame.setVisible(true);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -51,7 +52,7 @@ public class LoginPage extends JFrame {
 	 * Create the frame.
 	 */
 	public LoginPage() {
-		setTitle("DONATE APP");
+		setTitle("USER LOGIN PAGE");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 750, 500);
 		contentPane = new JPanel();
@@ -79,6 +80,7 @@ public class LoginPage extends JFrame {
 		usernameField.setColumns(10);
 		
 		JButton loginButton = new JButton("Login");
+		loginButton.setForeground(new Color(0, 255, 102));
 		loginButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -192,9 +194,6 @@ public class LoginPage extends JFrame {
 			}
 		});
 		adminLoginButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		
-		
-		
 		
 		
 		

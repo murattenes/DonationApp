@@ -71,7 +71,7 @@ public class RegistrationPage extends JFrame {
 	 * Create the frame.
 	 */
 	public RegistrationPage() {
-		setTitle("Registration Page");
+		setTitle("REGISTRATION PAGE");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 750, 500);
 		contentPane = new JPanel();
@@ -141,8 +141,10 @@ public class RegistrationPage extends JFrame {
 					 }
 					 else if(!Arrays.equals(rePasswordField.getPassword(), passwordField.getPassword())) {
 						Message.showMsg("Passwords must be same!");
-			
 						
+					 }
+					 else if(addressTextField.getText().length() > 255){
+						 Message.showMsg("Address cannot be longer than 255 character.");
 					 }
 					 else if(flag) {
 						 Message.showMsg("This username already exist.");
@@ -151,13 +153,15 @@ public class RegistrationPage extends JFrame {
 					 else {
 						try {
 							Admin.addUser(nameField.getText(), surnameField.getText(), usernameField.getText(), emailField.getText(), new String(passwordField.getPassword()), addressTextField.getText());
+							
+							LoginPage page = new LoginPage();
+							page.setVisible(true);
+							dispose();
 						} catch (SQLException e1) {
 							// TODO Auto-generated catch block
 							System.out.println(e1);
 						}
-						LoginPage page = new LoginPage();
-						page.setVisible(true);
-						dispose();
+						
 					 }
 					
 				} catch (SQLException e1) {

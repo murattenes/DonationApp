@@ -52,6 +52,7 @@ public class DonatePage extends JFrame {
 	 * Create the frame.
 	 */
 	public DonatePage(User user, Donation donation, int quantity, Long number) {
+		setTitle("DONATE PAGE");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();

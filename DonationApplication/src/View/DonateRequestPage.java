@@ -32,6 +32,7 @@ import java.sql.SQLException;
 import javax.swing.JSpinner;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.Window.Type;
 
 public class DonateRequestPage extends JFrame {
 
@@ -61,6 +62,7 @@ public class DonateRequestPage extends JFrame {
 	 * @param user 
 	 */
 	public DonateRequestPage(User user) {
+		setTitle("DONATE/REQUEST");
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {

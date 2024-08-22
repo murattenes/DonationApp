@@ -64,6 +64,7 @@ public class AdminPage extends JFrame {
 	 * @throws ParseException 
 	 */
 	public AdminPage(Admin admin) throws SQLException, ParseException {
+		setTitle("ADMIN PAGE");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 750);
 		contentPane = new JPanel();

@@ -38,6 +38,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.Color;
 
 public class UserPage extends JFrame {
 
@@ -73,6 +74,7 @@ public class UserPage extends JFrame {
 	
 	
 	public UserPage(User user) throws SQLException {
+		setTitle("USER PAGE");
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent e) {
@@ -163,6 +165,7 @@ public class UserPage extends JFrame {
 		
 		
 		JButton donateButton = new JButton("Donate");
+		donateButton.setOpaque(true);
 		donateButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {

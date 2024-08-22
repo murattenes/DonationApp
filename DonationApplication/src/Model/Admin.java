@@ -30,6 +30,8 @@ public class Admin extends User{
 	public Admin() {
 		
 	}
+	
+	//GET DONATION NUMBER
 	public static long getDonationNumber() {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 		LocalDateTime time = LocalDateTime.now();
@@ -41,7 +43,7 @@ public class Admin extends User{
 	
 	
 	
-	
+	//ADD USER TO DATABASE
 	public static void addUser(String name, String surname, String username, String email, String password, String address) throws SQLException {
 		Connection c = con.connect();
 		Statement st = c.createStatement();
@@ -70,6 +72,7 @@ public class Admin extends User{
 		
 		
 	}
+	//ADD DONATION TO THE POOL
 	public static void addDonation(int category, String subcategory, String param1, String param2, String condition, int quantity, Integer donor, Integer recipient ) throws SQLException {
 		Connection c = con.connect();
 		Statement st = c.createStatement();
@@ -98,6 +101,8 @@ public class Admin extends User{
 		c.close();
 		
 	}
+	
+	//ONE USER TO ANOTHER USER USING POOL
 	public static void addToFromDonation(int category, String subcategory, String param1, String param2, String condition, int quantity, Integer donor, Integer recipient ) throws SQLException {
 		Connection c = con.connect();
 		Statement st = c.createStatement();
@@ -126,6 +131,8 @@ public class Admin extends User{
 		c.close();
 		
 	}
+	
+	//ADD REQUEST TO THE POOL
 	public static void requestDonation(int category, String subcategory, String param1, String param2, String condition, int quantity, Integer donor, Integer recipient ) throws SQLException {
 		Connection c = con.connect();
 		Statement st = c.createStatement();
@@ -153,6 +160,8 @@ public class Admin extends User{
 		c.close();
 		
 	}
+	
+	//GET DONATION FROM DATABASE USING DONATION NUMBER
 	public static Donation getDonationbyNumber(Long number) throws SQLException{
 		Connection c = con.connect();
 		Statement st = c.createStatement();
@@ -181,6 +190,8 @@ public class Admin extends User{
 	return null;	
 
 	}
+	
+	//GET ALL DONATIONS. THIS IS FOR ADMIN PAGE.
 	public static ArrayList<Object[]> getAllDonations() throws SQLException {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 				
@@ -226,6 +237,7 @@ public class Admin extends User{
 		return list;
 	}
 	
+	//GET DONATIONS. THIS IS FOR USER PAGE
 	public static ArrayList<Object[]> getDonations() throws SQLException {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 				
@@ -274,7 +286,8 @@ public class Admin extends User{
 		return list;
 	}
 	
-	public static ArrayList<Object[]> getDonationsbyDonor(User user) throws SQLException{
+	//GET DONATIONS USING USER. THIS IS FOR PROFILE PAGE
+	public static ArrayList<Object[]> getDonationsbyUser(User user) throws SQLException{
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 
 		
@@ -310,8 +323,8 @@ public class Admin extends User{
 	}
 	
 	
-	
-	public static ArrayList<Object[]> getRequestsbyDonor(User user) throws SQLException{
+	//GET REQUESTS USING USER. THIS IS FOR PROFILE PAGE
+	public static ArrayList<Object[]> getRequestsbyUser(User user) throws SQLException{
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 
 		
@@ -346,6 +359,7 @@ public class Admin extends User{
 		return list;
 	}
 	
+	//MAKE ACTIVE STATUS OF DONATION
 	public static void activeItem(Long number) throws SQLException {
 		Connection c = con.connect();
 		Statement st = c.createStatement();
@@ -357,6 +371,8 @@ public class Admin extends User{
 		ps.executeUpdate();
 		
 	}
+	
+	//MAKE COMPLETED STATUS OF DONATION
 	public static void completeItem(Long number) throws SQLException {
 		Connection c = con.connect();
 		Statement st = c.createStatement();
@@ -368,6 +384,8 @@ public class Admin extends User{
 		ps.executeUpdate();
 		
 	}
+	
+	//MAKE CANCELED STATUS OF DONATION
 	public static void cancelItem(Long number) throws SQLException {
 		Connection c = con.connect();
 		Statement st = c.createStatement();
@@ -379,6 +397,8 @@ public class Admin extends User{
 		ps.executeUpdate();
 		
 	}
+	
+	//MAKE INPROGRESS STATUS OF DONATION
 	public static void inProgressItem(Long number) throws SQLException {
 		Connection c = con.connect();
 		Statement st = c.createStatement();
@@ -391,6 +411,7 @@ public class Admin extends User{
 		
 	}
 	
+	//WHEN SOMEONE DONATED LESS THAN NEEDED DECREASE THE NEEDED QUANTITY IN POOL
 	public static void editDonationQuantity(int quantity, Long number) throws SQLException {
 		Connection c = con.connect();
 		Statement st = c.createStatement();
@@ -403,6 +424,7 @@ public class Admin extends User{
 		
 	}
 	
+	//GET ALL USERS FROM DATABASE. THIS IS FOR ADMIN PAGE
 	public static ArrayList<Object[]> getAllUsers() throws SQLException, ParseException {
 		ArrayList<Object[]> list = new ArrayList<Object[]>();
 
@@ -489,6 +511,7 @@ public class Admin extends User{
 		return list;
 	}
 	
+	//MAKE INACTIVE STATUS OF USER. THIS IS FOR ADMIN PAGE
 	public static void makeInactiveUser(String username) throws SQLException {
 		Connection c = con.connect();
 		Statement st = c.createStatement();
@@ -502,6 +525,8 @@ public class Admin extends User{
 		c.close();
 		
 	}
+	
+	//MAKE ACTIVE STATUS OF USER. THIS IS FOR ADMIN PAGE
 	public static void makeActiveUser(String username) throws SQLException {
 		Connection c = con.connect();
 		Statement st = c.createStatement();
@@ -516,6 +541,7 @@ public class Admin extends User{
 		
 	}
 	
+	//GET ALL USERNAMES OF USERS FROM DATABASE. THIS IS FOR REGISTRATION PAGE. CHECK WHETHER USERNAME UNIQUE
 	public static ArrayList<String> getUsernames() throws SQLException {
 		ArrayList<String> lst = new ArrayList<String>();
 		

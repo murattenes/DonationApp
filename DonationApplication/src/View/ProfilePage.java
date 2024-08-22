@@ -65,6 +65,7 @@ public class ProfilePage extends JFrame {
 	 * @throws SQLException 
 	 */
 	public ProfilePage(User user) throws SQLException {
+		setTitle("PROFILE PAGE");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1000, 750);
 		contentPane = new JPanel();
@@ -104,7 +105,7 @@ public class ProfilePage extends JFrame {
 			    "No", "Category", "Subcategory", "Feature1", "Feature2", "Condition", 
 			    "Quantity", "Date", "Status", "Donor"};
 		myDonationsTablee.setColumnIdentifiers(columnNamesDonation);
-		ArrayList<Object[]> lst = Admin.getDonationsbyDonor(user);
+		ArrayList<Object[]> lst = Admin.getDonationsbyUser(user);
 		for (Object[] row : lst) {
 			myDonationsTablee.addRow(row);
 		}
@@ -122,7 +123,7 @@ public class ProfilePage extends JFrame {
 			    "No", "Category", "Subcategory", "Feature1", "Feature2", "Condition", 
 			    "Quantity", "Date", "Status", "Recipient"};
 		myRequestsTablee.setColumnIdentifiers(columnNamesRequest);
-		ArrayList<Object[]> liste = Admin.getRequestsbyDonor(user);
+		ArrayList<Object[]> liste = Admin.getRequestsbyUser(user);
 		for (Object[] row : liste) {
 			myRequestsTablee.addRow(row);
 		}
@@ -272,7 +273,7 @@ public class ProfilePage extends JFrame {
 	public void updateMyDonationsTable() throws SQLException {
 		NonEditableTableModel clear = (NonEditableTableModel) myDonationsTable.getModel();
 		clear.setRowCount(0);
-		ArrayList<Object[]> lst = Admin.getDonationsbyDonor(user);
+		ArrayList<Object[]> lst = Admin.getDonationsbyUser(user);
 		for (Object[] row : lst) {
 			myDonationsTablee.addRow(row);
 		}
@@ -280,7 +281,7 @@ public class ProfilePage extends JFrame {
 	public void updateMyRequestsTable() throws SQLException {
 		NonEditableTableModel clear = (NonEditableTableModel) myRequestsTable.getModel();
 		clear.setRowCount(0);
-		ArrayList<Object[]> lst = Admin.getRequestsbyDonor(user);
+		ArrayList<Object[]> lst = Admin.getRequestsbyUser(user);
 		for (Object[] row : lst) {
 			myRequestsTablee.addRow(row);
 		}

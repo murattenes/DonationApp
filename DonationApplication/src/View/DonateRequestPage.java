@@ -66,7 +66,7 @@ public class DonateRequestPage extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent e) {
-				UserPage.donateRequestControl = true;
+				UserPage.donateRequestPageControl = true;
 			}
 		});
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);

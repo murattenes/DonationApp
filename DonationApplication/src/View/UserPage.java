@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Vector;
 
@@ -11,6 +12,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 import Helper.Message;
 import Helper.NonEditableTableModel;
@@ -26,6 +29,8 @@ import javax.swing.JScrollPane;
 import java.awt.Font;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultRowSorter;
+
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
@@ -35,6 +40,7 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JList;
 import javax.swing.AbstractListModel;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -48,7 +54,8 @@ public class UserPage extends JFrame {
 	private DefaultTableModel myDonationsTablee;
 	static User user = new User();
 	private JTable poolTable;
-	public static Boolean donateRequestControl;
+	public static Boolean donateRequestPageControl;
+	public static Boolean profilePageControl;
 
 	/**
 	 * Launch the application.
@@ -78,7 +85,8 @@ public class UserPage extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowOpened(WindowEvent e) {
-				UserPage.donateRequestControl = true;
+				UserPage.donateRequestPageControl = true;
+				UserPage.profilePageControl = true;
 			}
 		});
 
@@ -103,12 +111,24 @@ public class UserPage extends JFrame {
 		for (Object[] row : lst) {
 			poolTablee.addRow(row);
 		}
+		
+
 		poolPanel.setLayout(null);
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(0, 0, 951, 525);
+		scrollPane.setBounds(0, 0, 957, 525);
 		poolPanel.add(scrollPane);
 		poolTable = new JTable(poolTablee);
 		poolTable.setFocusable(false);
+		poolTable.setAutoCreateRowSorter(true);
+		
+		DefaultRowSorter sorter = (DefaultRowSorter) poolTable.getRowSorter();
+		sorter.setComparator(6, new Comparator<Integer>() {
+			@Override
+			  public int compare(Integer o1, Integer o2) {
+			      return Integer.compare(o1, o2);
+			  }
+			});
+		
 		scrollPane.setViewportView(poolTable);
 		//poolTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
@@ -117,7 +137,7 @@ public class UserPage extends JFrame {
 		welcomeLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
 		welcomeLabel.setText("Welcome " + user.getName());
 		
-		JButton logoutButton = new JButton("Logout");
+		JButton logoutButton = new JButton("Log out");
 		logoutButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -134,10 +154,10 @@ public class UserPage extends JFrame {
 		donateRequestButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(UserPage.donateRequestControl) {
+				if(UserPage.donateRequestPageControl) {
 					DonateRequestPage p = new DonateRequestPage(user);
 					p.setVisible(true);
-					UserPage.donateRequestControl = false;
+					UserPage.donateRequestPageControl = false;
 				}
 				
 				
@@ -150,14 +170,17 @@ public class UserPage extends JFrame {
 		profileButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				ProfilePage p;
-				try {
-					p = new ProfilePage(user);
-					p.setVisible(true);
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				if(UserPage.profilePageControl) {
+					try {
+						ProfilePage p = new ProfilePage(user);
+						p.setVisible(true);
+						UserPage.profilePageControl = false;
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
+				
 				
 			}
 		});
@@ -238,8 +261,8 @@ public class UserPage extends JFrame {
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
 		gl_contentPane.setHorizontalGroup(
-			gl_contentPane.createParallelGroup(Alignment.LEADING)
-				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+			gl_contentPane.createParallelGroup(Alignment.TRAILING)
+				.addGroup(gl_contentPane.createSequentialGroup()
 					.addGap(6)
 					.addComponent(photoLabel, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)
 					.addGap(12)
@@ -247,14 +270,13 @@ public class UserPage extends JFrame {
 						.addComponent(welcomeLabel, GroupLayout.PREFERRED_SIZE, 199, GroupLayout.PREFERRED_SIZE)
 						.addComponent(profileButton, GroupLayout.PREFERRED_SIZE, 117, GroupLayout.PREFERRED_SIZE))
 					.addGap(519)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(donateRequestButton, GroupLayout.PREFERRED_SIZE, 158, GroupLayout.PREFERRED_SIZE)
-							.addContainerGap(6, Short.MAX_VALUE))
-						.addComponent(logoutButton, GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)))
+					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+						.addComponent(donateRequestButton, GroupLayout.PREFERRED_SIZE, 158, GroupLayout.PREFERRED_SIZE)
+						.addComponent(logoutButton, GroupLayout.PREFERRED_SIZE, 158, GroupLayout.PREFERRED_SIZE))
+					.addContainerGap())
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addContainerGap()
-					.addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 978, Short.MAX_VALUE)
+					.addComponent(tabbedPane, GroupLayout.DEFAULT_SIZE, 984, Short.MAX_VALUE)
 					.addGap(6))
 		);
 		gl_contentPane.setVerticalGroup(

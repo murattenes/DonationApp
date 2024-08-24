@@ -79,7 +79,7 @@ public class AdminPage extends JFrame {
 		
 		JLabel welcomeLAbel = new JLabel("New label");
 		welcomeLAbel.setText("Welcome " + admin.getName());
-		welcomeLAbel.setSize(admin.getName().length() * 20, 20);
+		welcomeLAbel.setSize(admin.getName().length() * 30, 20);
 		welcomeLAbel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
 		welcomeLAbel.setLocation(93, 0);
 		contentPane.add(welcomeLAbel);
@@ -194,7 +194,7 @@ public class AdminPage extends JFrame {
 		
 		usersTablee = new NonEditableTableModel();
 		String[] usersColumnNames = new String[] {
-			    "Name", "Surname", "Username", "E-mail", "Type", "Status", "Address", "Registiration Date", "Last Login", "Completed Don.", "Completed Req."};
+			    "Name", "Surname", "Username", "E-mail", "Type", "Status", "Address", "Registiration Date", "Last Login", "Completed Don.", "Completed Req.", "Points"};
 		usersTablee.setColumnIdentifiers(usersColumnNames);
 		ArrayList<Object[]> usersLst = Admin.getAllUsers();
 		for (Object[] row : usersLst) {
@@ -257,6 +257,19 @@ public class AdminPage extends JFrame {
 		activeButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		activeButton.setBounds(309, 539, 155, 29);
 		usersPanel.add(activeButton);
+		
+		JButton btnNewButton = new JButton("Log out");
+		btnNewButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				AdminLoginPage p = new AdminLoginPage();
+				p.setVisible(true);
+				dispose();
+			}
+		});
+		btnNewButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		btnNewButton.setBounds(888, 0, 106, 29);
+		contentPane.add(btnNewButton);
 				
 		
 		

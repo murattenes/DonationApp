@@ -24,8 +24,8 @@ public class Admin extends User{
 	
 	
 
-	public Admin(int id, String name, String surname, String username, String email, String password, String address) {
-		super(id, name, surname, username, email, password, address);
+	public Admin(int id, String name, String surname, String username, String email, String password, String address, Integer point) {
+		super(id, name, surname, username, email, password, address, point);
 	}
 	public Admin() {
 		
@@ -77,7 +77,7 @@ public class Admin extends User{
 		Connection c = con.connect();
 		Statement st = c.createStatement();
 		
-		String query = "INSERT INTO donations(number, category, subcategory, param1, param2, `condition`, quantity, status, donationDate, donor, recipient) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String query = "INSERT INTO donations(number, category, subcategory, param1, param2, `condition`, quantity, status, donationDate, donor, recipient, isEvaluated) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		PreparedStatement ps = c.prepareStatement(query);
 		
 		
@@ -94,6 +94,7 @@ public class Admin extends User{
 		ps.setTimestamp(9, Timestamp.valueOf(time));
 		ps.setInt(10, donor);
 		ps.setObject(11, recipient, java.sql.Types.INTEGER);
+		ps.setInt(11, 0);
 		
 		
 		ps.executeUpdate();
@@ -295,17 +296,20 @@ public class Admin extends User{
 		Connection c = con.connect();
 		Statement st = c.createStatement();
 		String query = "SELECT donations.*, donation_status.statusname, donation_categories.categoryname, " +
-					   "users.username FROM donations " + 
+					   "donor_user.username AS donorname, "+
+					   "recipient_user.username AS recipientname "+
+					   "FROM donations " + 
 					   "INNER JOIN donation_status ON donations.status = donation_status.id " +
 				       "INNER JOIN donation_categories ON donations.category = donation_categories.id " +
-					   "INNER JOIN users ON donations.donor = users.id " +
-				       "WHERE users.id = ?" ;
+					   "INNER JOIN users AS donor_user ON donations.donor = donor_user.id " +
+				       "LEFT JOIN users AS recipient_user ON donations.recipient = recipient_user.id "+
+				       "WHERE donations.donor = ?" ;
 		PreparedStatement ps = c.prepareStatement(query);
 		ps.setInt(1, user.getId());
 		
 		ResultSet rs = ps.executeQuery();
 		while(rs.next()) {
-			Object[] items = new Object[10];
+			Object[] items = new Object[11];
 			items[0] = rs.getLong("number");
 			items[1] = rs.getString("categoryname");
 			items[2] = rs.getString("subcategory");
@@ -315,7 +319,8 @@ public class Admin extends User{
 			items[6] = rs.getInt("quantity");
 			items[7] = rs.getDate("donationDate");
 			items[8] = rs.getString("statusname");
-			items[9] = rs.getString("username");
+			items[9] = rs.getString("donorname");
+			items[10] = rs.getString("recipientname");
 			
 			list.add(items);
 		}		
@@ -332,17 +337,20 @@ public class Admin extends User{
 		Connection c = con.connect();
 		Statement st = c.createStatement();
 		String query = "SELECT donations.*, donation_status.statusname, donation_categories.categoryname, " +
-					   "users.username FROM donations " + 
+					   "recipient_user.username AS recipientname, "+
+					   "donor_user.username AS donorname "+
+					   "FROM donations " + 
 					   "INNER JOIN donation_status ON donations.status = donation_status.id " +
 				       "INNER JOIN donation_categories ON donations.category = donation_categories.id " +
-					   "INNER JOIN users ON donations.recipient = users.id " +
-				       "WHERE users.id = ?" ;
+					   "INNER JOIN users AS recipient_user ON donations.recipient = recipient_user.id " +
+				       "LEFT JOIN users AS donor_user ON donations.donor = donor_user.id "+
+				       "WHERE recipient_user.id = ?" ;
 		PreparedStatement ps = c.prepareStatement(query);
 		ps.setInt(1, user.getId());
 		
 		ResultSet rs = ps.executeQuery();
 		while(rs.next()) {
-			Object[] items = new Object[10];
+			Object[] items = new Object[11];
 			items[0] = rs.getLong("number");
 			items[1] = rs.getString("categoryname");
 			items[2] = rs.getString("subcategory");
@@ -352,7 +360,8 @@ public class Admin extends User{
 			items[6] = rs.getInt("quantity");
 			items[7] = rs.getDate("donationDate");
 			items[8] = rs.getString("statusname");
-			items[9] = rs.getString("username");
+			items[9] = rs.getString("recipientname");
+			items[10] = rs.getString("donorname");
 			
 			list.add(items);
 		}		
@@ -440,7 +449,7 @@ public class Admin extends User{
 		ResultSet rs = ps.executeQuery();
 		
 		while(rs.next()) {
-			Object[] items = new Object[11];
+			Object[] items = new Object[12];
 			items[0] = rs.getString("name");
 			items[1] = rs.getString("surname");
 			items[2] = rs.getString("username");
@@ -500,6 +509,7 @@ public class Admin extends User{
 			thirdPs.close();
 			thirdRs.close();
 			items[10] = thirdSize;
+			items[11] = rs.getFloat("point");
 			
 			
 			list.add(items);
@@ -557,6 +567,107 @@ public class Admin extends User{
 		c.close();
 		return lst;
 		
+	}
+	
+	public static Integer getEvaluateCount(String username) throws SQLException {
+		int value = 0;
+		
+		
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		String query = "SELECT COUNT(donations.isEvaluated) " +
+					   "FROM donations " +
+					   "INNER JOIN users ON donations.donor = users.id " +
+					   "WHERE donations.isEvaluated = 1 AND users.username = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setString(1, username);
+		
+		ResultSet rs = ps.executeQuery();
+		while(rs.next()) {
+			value = rs.getInt(1);
+		}
+		
+		
+		
+		return value;
+	}
+	
+	public static Float getUserPoint(String username) throws SQLException {
+		float value = 0;
+		
+		
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		String query = "SELECT point FROM users WHERE username = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setString(1, username);
+		
+		ResultSet rs = ps.executeQuery();
+		if(rs.next()) {
+			value = rs.getFloat("point");
+			return value;
+		}
+		
+		
+		rs.close();
+	    ps.close();
+	    c.close();
+		return value;
+		
+		
+	}
+	public static void updateUserPoint(String username, Float value) throws SQLException {
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		
+		String query = "UPDATE users SET users.point = ? WHERE users.username = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		
+		ps.setFloat(1, value);
+		ps.setString(2, username);
+		ps.executeUpdate();
+		
+		ps.close();
+		c.close();
+		
+	}
+	
+	public static void updateIsEvaluated(Long no) throws SQLException {
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		
+		String query = "UPDATE donations SET donations.isEvaluated = 1 WHERE donations.number = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		
+		ps.setLong(1, no);
+		ps.executeUpdate();
+		
+		ps.close();
+		c.close();
+	}
+	
+	public static Boolean checkIsEvaluated(Long no) throws SQLException {
+		
+		Connection c = con.connect();
+		Statement st = c.createStatement();
+		
+		String query = "SELECT donations.* FROM donations WHERE donations.number = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setLong(1, no);
+		
+		ResultSet rs = ps.executeQuery();
+		
+		if(rs.next()) {
+			Integer value = rs.getInt("isEvaluated");
+			if (value == 1) {
+				return true;
+			}
+		}
+		
+		ps.close();
+		c.close();
+		
+		return false;
 	}
 	
 	

@@ -134,7 +134,7 @@ public class AdminLoginPage extends JFrame {
 				                	
 				                	
 				                	//LOGIN
-				                    Admin user = new Admin(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("address"));
+				                    Admin user = new Admin(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("address"), null);
 				                    AdminPage p = new AdminPage(user);
 				                    p.setVisible(true);
 				                    dispose();

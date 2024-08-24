@@ -130,7 +130,7 @@ public class LoginPage extends JFrame {
 					                	
 					                	
 					                	//LOGIN
-					                    User user = new User(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("address"));
+					                    User user = new User(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("address"), null);
 					                    UserPage p = new UserPage(user);
 					                    p.setVisible(true);
 					                    dispose();

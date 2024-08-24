@@ -13,4 +13,6 @@ public class NonEditableTableModel extends DefaultTableModel {
         // All cells are not editable
         return false;
     }
+
+	
 }

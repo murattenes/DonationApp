@@ -5,19 +5,20 @@ import java.sql.Connection;
 import Helper.DataBase;
 
 public class User{
-	private static Integer id;
-	private String name;
-	private String surname;
-	private String username;
-	private String email;
-	private String password;
-	private String address;
+	protected static Integer id;
+	protected String name;
+	protected String surname;
+	protected String username;
+	protected String email;
+	protected String password;
+	protected String address;
+	protected Integer point;
 	static DataBase con = new DataBase();
 	
 	
 	
 
-	public User(Integer id, String name, String surname, String username, String email, String password, String address) {
+	public User(Integer id, String name, String surname, String username, String email, String password, String address, Integer point) {
 		
 		super();
 		User.id = id;
@@ -27,6 +28,7 @@ public class User{
 		this.email = email;
 		this.password = password;
 		this.address = address;
+		this.point = point;
 	}
 
 
@@ -120,6 +122,10 @@ public class User{
 	
 	public Integer getId() {
 		return User.id;
+	}
+	
+	public Integer getPoint() {
+		return this.point;
 	}
 
 

@@ -408,7 +408,7 @@ public class Admin extends User{
 	}
 	
 	//MAKE INPROGRESS STATUS OF DONATION
-	public static void inProgressItem(Long number) throws SQLException {
+	public static void ongoingItem(Long number) throws SQLException {
 		Connection c = con.connect();
 		Statement st = c.createStatement();
 		

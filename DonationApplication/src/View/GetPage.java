@@ -106,7 +106,7 @@ public class GetPage extends JFrame {
 					else if (spinnerValue < donation.getQuantity()) {
 						Admin.addToFromDonation(donation.getCategory(), donation.getSubCategory(), donation.getParam1(), donation.getParam2(), donation.getCondition(), spinnerValue, donation.getDonor(), user.getId());
 						Admin.editDonationQuantity(donation.getQuantity() - spinnerValue, number);
-						Admin.inProgressItem(number);
+						Admin.ongoingItem(number);
 						Message.showMsg("Process succesful !");
 						dispose();
 					}

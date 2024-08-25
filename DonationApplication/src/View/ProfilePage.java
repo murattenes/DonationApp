@@ -237,7 +237,7 @@ public class ProfilePage extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				if(tabbedPane.getSelectedIndex() == 0 /* MY DONATIONS */) {
 					int row = myDonationsTable.getSelectedRow();
-					if(row > -1 && "Active".equals(myDonationsTable.getValueAt(row, 8)) || "In progress".equals(myDonationsTable.getValueAt(row, 8))) {
+					if(row > -1 && "Active".equals(myDonationsTable.getValueAt(row, 8)) || "Ongoing".equals(myDonationsTable.getValueAt(row, 8))) {
 						Long nmb = (Long) myDonationsTable.getValueAt(row, 0);
 						try {
 							Admin.completeItem(nmb);
@@ -258,7 +258,7 @@ public class ProfilePage extends JFrame {
 				}
 				else if(tabbedPane.getSelectedIndex() == 1 /* MY REQUESTS */) {
 					int row = myRequestsTable.getSelectedRow();
-					if(row > -1 && "Active".equals(myRequestsTable.getValueAt(row, 8)) || "In progress".equals(myRequestsTable.getValueAt(row, 8))) {
+					if(row > -1 && "Active".equals(myRequestsTable.getValueAt(row, 8)) || "Ongoing".equals(myRequestsTable.getValueAt(row, 8))) {
 						Long nmb = (Long) myRequestsTable.getValueAt(row, 0);
 						try {
 							Admin.completeItem(nmb);
@@ -289,7 +289,7 @@ public class ProfilePage extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				if(tabbedPane.getSelectedIndex() == 1 /* MY DONATIONS */) {
 					int row = myDonationsTable.getSelectedRow();
-					if("Active".equals(myDonationsTable.getValueAt(row, 8)) || "In progress".equals(myDonationsTable.getValueAt(row, 8))) {
+					if("Active".equals(myDonationsTable.getValueAt(row, 8)) || "Ongoing".equals(myDonationsTable.getValueAt(row, 8))) {
 						Long nmb = (Long) myDonationsTable.getValueAt(row, 0);
 						try {
 							Admin.cancelItem(nmb);
@@ -310,7 +310,7 @@ public class ProfilePage extends JFrame {
 				}
 				else if(tabbedPane.getSelectedIndex() == 0 /* MY REQUESTS */) {
 					int row = myRequestsTable.getSelectedRow();
-					if("Active".equals(myRequestsTable.getValueAt(row, 8)) || "In progress".equals(myRequestsTable.getValueAt(row, 8))) {
+					if("Active".equals(myRequestsTable.getValueAt(row, 8)) || "Ongoing".equals(myRequestsTable.getValueAt(row, 8))) {
 						Long nmb = (Long) myRequestsTable.getValueAt(row, 0);
 						try {
 							Admin.cancelItem(nmb);

@@ -37,7 +37,7 @@ public class GetPage extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GetPage frame = new GetPage(user, donation, quantity, number);
+					GetPage frame = new GetPage(user, number);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -48,8 +48,10 @@ public class GetPage extends JFrame {
 
 	/**
 	 * Create the frame.
+	 * @throws SQLException 
 	 */
-	public GetPage(User user, Donation donation, int quantity, Long number) {
+	public GetPage(User user, Long number) throws SQLException {
+		Donation d = Admin.getDonationbyNumber(number);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
 		contentPane = new JPanel();
@@ -58,9 +60,8 @@ public class GetPage extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel infoLabel = new JLabel("");
+		JLabel infoLabel = new JLabel("Donation: " + d.getSubCategory() + ", Available: " + d.getQuantity());
 		infoLabel.setBounds(6, 6, 438, 16);
-		infoLabel.setText("Donatation: " + donation.getSubCategory() + ", Available: " + donation.getQuantity());
 		contentPane.add(infoLabel);
 		
 		JLabel quantityLabel = new JLabel("Get quantity:");
@@ -84,20 +85,24 @@ public class GetPage extends JFrame {
 		getButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				int spinnerValue = (Integer)spinner.getValue();
+				
 				try {
+					
+					Donation donation = Admin.getDonationbyNumber(number);
+					int spinnerValue = (Integer)spinner.getValue();
+					infoLabel.setText("Donation: " + donation.getSubCategory() + ", Available: " + donation.getQuantity());
 					if(spinnerValue > donation.getQuantity()) {
 						Message.showMsg("Your request quantity higher than available.\nYou can decrease the quantity.");
 					}
 					else if (spinnerValue < donation.getQuantity()) {
 						Admin.addToFromDonation(donation.getCategory(), donation.getSubCategory(), donation.getParam1(), donation.getParam2(), donation.getCondition(), spinnerValue, donation.getDonor(), user.getId());
-						Admin.editDonationQuantity(quantity - spinnerValue, number);
+						Admin.editDonationQuantity(donation.getQuantity() - spinnerValue, number);
 						Admin.inProgressItem(number);
 						dispose();
 					}
 					else if (spinnerValue == donation.getQuantity()) {
 						Admin.addToFromDonation(donation.getCategory(), donation.getSubCategory(), donation.getParam1(), donation.getParam2(), donation.getCondition(), spinnerValue, donation.getDonor(), user.getId());
-						Admin.editDonationQuantity(quantity - spinnerValue, number);
+						Admin.editDonationQuantity(donation.getQuantity() - spinnerValue, number);
 						Admin.completeItem(number);
 						dispose();
 					}

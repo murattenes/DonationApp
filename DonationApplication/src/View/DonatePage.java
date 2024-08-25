@@ -39,7 +39,7 @@ public class DonatePage extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					DonatePage frame = new DonatePage(user, donation, quantity, number);
+					DonatePage frame = new DonatePage(user, number);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -50,8 +50,10 @@ public class DonatePage extends JFrame {
 
 	/**
 	 * Create the frame.
+	 * @throws SQLException 
 	 */
-	public DonatePage(User user, Donation donation, int quantity, Long number) {
+	public DonatePage(User user, Long number) throws SQLException {
+		Donation d = Admin.getDonationbyNumber(number);
 		setTitle("DONATE PAGE");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -65,6 +67,11 @@ public class DonatePage extends JFrame {
 		quantityLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
 		quantityLabel.setBounds(6, 106, 148, 20);
 		contentPane.add(quantityLabel);
+		
+		JLabel infoLabel = new JLabel("Donation: " + d.getSubCategory() + ", Needed: " + d.getQuantity());
+		infoLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		infoLabel.setBounds(6, 6, 438, 20);
+		contentPane.add(infoLabel);
 	
 		
 		SpinnerNumberModel model = new SpinnerNumberModel();
@@ -83,19 +90,21 @@ public class DonatePage extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try {
+					infoLabel.setText("Donation: " + d.getSubCategory() + ", Needed: " + d.getQuantity());
+					Donation donation = Admin.getDonationbyNumber(number);
 					int spinnerValue = (Integer)spinner.getValue();
 					if(spinnerValue > donation.getQuantity()) {
 						Message.showMsg("Your donation quantity higher than needed.\nYou can decrease the quantity.");
 					}
 					else if(spinnerValue < donation.getQuantity()) {
 						Admin.addToFromDonation(donation.getCategory(), donation.getSubCategory(), donation.getParam1(), donation.getParam2(), donation.getCondition(), spinnerValue, user.getId(), donation.getRecipient());
-						Admin.editDonationQuantity(quantity - spinnerValue, number);
+						Admin.editDonationQuantity(donation.getQuantity() - spinnerValue, number);
 						Admin.inProgressItem(number);
 						dispose();
 					}
 					else if(spinnerValue == donation.getQuantity()) {
 						Admin.addToFromDonation(donation.getCategory(), donation.getSubCategory(), donation.getParam1(), donation.getParam2(), donation.getCondition(), spinnerValue, user.getId(), donation.getRecipient());
-						Admin.editDonationQuantity(quantity - spinnerValue, number);
+						Admin.editDonationQuantity(donation.getQuantity() - spinnerValue, number);
 						Admin.completeItem(number);
 						dispose();
 					}
@@ -113,11 +122,7 @@ public class DonatePage extends JFrame {
 		donateButton.setBounds(270, 104, 117, 29);
 		contentPane.add(donateButton);
 		
-		JLabel infoLabel = new JLabel("New label");
-		infoLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		infoLabel.setText("Donatation: " + donation.getSubCategory() + ", Needed: " + donation.getQuantity());
-		infoLabel.setBounds(6, 6, 438, 20);
-		contentPane.add(infoLabel);
+
 		
 		
 		

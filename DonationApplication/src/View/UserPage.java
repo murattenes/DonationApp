@@ -16,6 +16,7 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 import Helper.Message;
+import Helper.MyComparator;
 import Helper.NonEditableTableModel;
 import Model.Admin;
 import Model.Donation;
@@ -121,13 +122,8 @@ public class UserPage extends JFrame {
 		poolTable.setFocusable(false);
 		poolTable.setAutoCreateRowSorter(true);
 		
-		DefaultRowSorter sorter = (DefaultRowSorter) poolTable.getRowSorter();
-		sorter.setComparator(6, new Comparator<Integer>() {
-			@Override
-			  public int compare(Integer o1, Integer o2) {
-			      return Integer.compare(o1, o2);
-			  }
-			});
+		DefaultRowSorter<?, ?> sorter = (DefaultRowSorter<?, ?>) poolTable.getRowSorter();
+		sorter.setComparator(6, MyComparator.compInteger);
 		
 		scrollPane.setViewportView(poolTable);
 		//poolTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -194,16 +190,16 @@ public class UserPage extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				int row = poolTable.getSelectedRow();
 				if (row > -1 && poolTable.getValueAt(row, 9) == null && !user.getUsername().equals(poolTable.getValueAt(row, 10))) {
+					
 					try {
 						Long number = (Long) poolTable.getValueAt(row, 0);
-						int quantity =  (int) poolTable.getValueAt(row, 6);
-						Donation d = Admin.getDonationbyNumber(number);
-						DonatePage p = new DonatePage(user, d, quantity, number);
+						DonatePage p = new DonatePage(user, number);
 						p.setVisible(true);
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+					
 					
 					
 				}
@@ -221,17 +217,15 @@ public class UserPage extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				int row = poolTable.getSelectedRow();
 				if(row > -1 && poolTable.getValueAt(row, 10) == null && !user.getUsername().equals(poolTable.getValueAt(row, 9))) {
-					
 					try {
 						Long number = (Long) poolTable.getValueAt(row, 0);
-						int quantity =  (int) poolTable.getValueAt(row, 6);
-						Donation d = Admin.getDonationbyNumber(number);
-						GetPage p = new GetPage(user, d, quantity, number);
+						GetPage p = new GetPage(user, number);
 						p.setVisible(true);
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+					
 				}
 			}
 		});

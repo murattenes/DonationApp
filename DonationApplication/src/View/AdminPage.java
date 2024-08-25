@@ -9,17 +9,21 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import Helper.NonEditableTableModel;
+import Helper.Message;
+import Helper.MyComparator;
 import Model.Admin;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import javax.swing.JTabbedPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.DefaultRowSorter;
 import javax.swing.JButton;
 import javax.swing.JSeparator;
 import java.awt.event.MouseAdapter;
@@ -117,8 +121,6 @@ public class AdminPage extends JFrame {
 			donationsTablee.addRow(row);
 		}
 		
-
-		
 		donationsTable = new JTable(donationsTablee);
 		donationsTable.setFocusable(false);
 		donationsTable.addMouseListener(new MouseAdapter() {
@@ -132,6 +134,9 @@ public class AdminPage extends JFrame {
 				
 			}
 		});
+		donationsTable.setAutoCreateRowSorter(true);
+		DefaultRowSorter<?, ?> donationSorter = (DefaultRowSorter<?, ?>) donationsTable.getRowSorter();
+		donationSorter.setComparator(6, MyComparator.compInteger);
 		scrollPane.setViewportView(donationsTable);
 		
 		
@@ -144,6 +149,8 @@ public class AdminPage extends JFrame {
 					Long number = (Long) donationsTable.getValueAt(row, 0);
 					try {
 						Admin.completeItem(number);
+						Message.showMsg("Completed!");
+						updateDonationsTable();
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -164,6 +171,8 @@ public class AdminPage extends JFrame {
 					Long number = (Long) donationsTable.getValueAt(row, 0);
 					try {
 						Admin.cancelItem(number);
+						Message.showMsg("Canceled!");
+						updateDonationsTable();
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -194,7 +203,8 @@ public class AdminPage extends JFrame {
 		
 		usersTablee = new NonEditableTableModel();
 		String[] usersColumnNames = new String[] {
-			    "Name", "Surname", "Username", "E-mail", "Type", "Status", "Address", "Registiration Date", "Last Login", "Completed Don.", "Completed Req.", "Points"};
+			    "Name", "Surname", "Username", "E-mail", "Type", "Status", "Address", "Registiration Date", 
+			    "Last Login", "Completed Don.", "Completed Req.", "Points"};
 		usersTablee.setColumnIdentifiers(usersColumnNames);
 		ArrayList<Object[]> usersLst = Admin.getAllUsers();
 		for (Object[] row : usersLst) {
@@ -212,6 +222,12 @@ public class AdminPage extends JFrame {
 				
 			}
 		});
+		usersTable.setAutoCreateRowSorter(true);
+		DefaultRowSorter<?, ?> usersSorter = (DefaultRowSorter<?, ?>) usersTable.getRowSorter();
+		usersSorter.setComparator(9, MyComparator.compInteger);
+		usersSorter.setComparator(10, MyComparator.compInteger);
+		usersSorter.setComparator(11, MyComparator.compFloat);
+		
 		usersTable.setFocusable(false);
 		scrollPane_1.setViewportView(usersTable);
 		
@@ -227,7 +243,8 @@ public class AdminPage extends JFrame {
 					try {
 						String username = (String) usersTable.getValueAt(row, 2);
 						Admin.makeInactiveUser(username);
-					} catch (SQLException e1) {
+						updateUsersTable();
+					} catch (SQLException | ParseException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
@@ -247,7 +264,8 @@ public class AdminPage extends JFrame {
 					try {
 						String username = (String) usersTable.getValueAt(row, 2);
 						Admin.makeActiveUser(username);
-					} catch (SQLException e1) {
+						updateUsersTable();
+					} catch (SQLException | ParseException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
@@ -274,5 +292,23 @@ public class AdminPage extends JFrame {
 		
 		
 		
+	}
+	
+	public void updateDonationsTable() throws SQLException {
+		NonEditableTableModel clear = (NonEditableTableModel) donationsTable.getModel();
+		clear.setRowCount(0);
+		ArrayList<Object[]> lst = Admin.getAllDonations();
+		for (Object[] row : lst) {
+			donationsTablee.addRow(row);
+		}
+	}
+	
+	public void updateUsersTable() throws SQLException, ParseException {
+		NonEditableTableModel clear = (NonEditableTableModel) usersTable.getModel();
+		clear.setRowCount(0);
+		ArrayList<Object[]> lst = Admin.getAllUsers();
+		for (Object[] row : lst) {
+			usersTablee.addRow(row);
+		}
 	}
 }

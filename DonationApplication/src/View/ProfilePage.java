@@ -9,6 +9,7 @@ import javax.swing.table.DefaultTableModel;
 
 import Helper.DataBase;
 import Helper.Message;
+import Helper.MyComparator;
 import Helper.NonEditableTableModel;
 import Model.Admin;
 import Model.User;
@@ -145,13 +146,8 @@ public class ProfilePage extends JFrame {
 		myDonationsTable.setFocusable(false);
 		myDonationsTable.setAutoCreateRowSorter(true);
 		
-		DefaultRowSorter donationsTableSorter = (DefaultRowSorter) myDonationsTable.getRowSorter();
-		donationsTableSorter.setComparator(6, new Comparator<Integer>() {
-			@Override
-			  public int compare(Integer o1, Integer o2) {
-			      return Integer.compare(o1, o2);
-			  }
-			});
+		DefaultRowSorter<?, ?> donationsTableSorter = (DefaultRowSorter<?, ?>) myDonationsTable.getRowSorter();
+		donationsTableSorter.setComparator(6, MyComparator.compInteger);
 		scrollPane.setViewportView(myDonationsTable);
 		
 		
@@ -177,13 +173,8 @@ public class ProfilePage extends JFrame {
 		myRequestsTable.setFocusable(false);
 		myRequestsTable.setAutoCreateRowSorter(true);
 		
-		DefaultRowSorter requestsTableSorter = (DefaultRowSorter) myDonationsTable.getRowSorter();
-		requestsTableSorter.setComparator(6, new Comparator<Integer>() {
-			@Override
-			  public int compare(Integer o1, Integer o2) {
-			      return Integer.compare(o1, o2);
-			  }
-			});
+		DefaultRowSorter<?, ?> requestsTableSorter = (DefaultRowSorter<?, ?>) myDonationsTable.getRowSorter();
+		requestsTableSorter.setComparator(6, MyComparator.compInteger);
 		
 		scrollPane_1.setViewportView(myRequestsTable);
 		//myDonationsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -371,5 +362,7 @@ public class ProfilePage extends JFrame {
 			myRequestsTablee.addRow(row);
 		}
 	}
+	
+	
 }
 

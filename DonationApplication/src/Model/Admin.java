@@ -24,7 +24,7 @@ public class Admin extends User{
 	
 	
 
-	public Admin(int id, String name, String surname, String username, String email, String password, String address, Integer point) {
+	public Admin(int id, String name, String surname, String username, String email, Long password, String address, Integer point) {
 		super(id, name, surname, username, email, password, address, point);
 	}
 	public Admin() {
@@ -44,7 +44,7 @@ public class Admin extends User{
 	
 	
 	//ADD USER TO DATABASE
-	public static void addUser(String name, String surname, String username, String email, String password, String address) throws SQLException {
+	public static void addUser(String name, String surname, String username, String email, Long password, String address) throws SQLException {
 		Connection c = con.connect();
 		Statement st = c.createStatement();
 		
@@ -55,7 +55,7 @@ public class Admin extends User{
 		ps.setString(2, surname);
 		ps.setString(3, username);
 		ps.setString(4, email);
-		ps.setString(5, password);
+		ps.setLong(5, password);
 		ps.setInt(6, 2);
 		ps.setInt(7, 1);
 		
@@ -94,7 +94,7 @@ public class Admin extends User{
 		ps.setTimestamp(9, Timestamp.valueOf(time));
 		ps.setInt(10, donor);
 		ps.setObject(11, recipient, java.sql.Types.INTEGER);
-		ps.setInt(11, 0);
+		ps.setInt(12, 0);
 		
 		
 		ps.executeUpdate();

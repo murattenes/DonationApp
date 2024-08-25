@@ -57,6 +57,8 @@ public class UserPage extends JFrame {
 	private JTable poolTable;
 	public static Boolean donateRequestPageControl;
 	public static Boolean profilePageControl;
+	public static Boolean donatePageControl;
+	public static Boolean getPageControl;
 
 	/**
 	 * Launch the application.
@@ -88,6 +90,17 @@ public class UserPage extends JFrame {
 			public void windowOpened(WindowEvent e) {
 				UserPage.donateRequestPageControl = true;
 				UserPage.profilePageControl = true;
+				UserPage.donatePageControl = true;
+				UserPage.getPageControl = true;
+			}
+			@Override
+			public void windowActivated(WindowEvent e) {
+				try {
+					updatePool();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 
@@ -190,17 +203,18 @@ public class UserPage extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				int row = poolTable.getSelectedRow();
 				if (row > -1 && poolTable.getValueAt(row, 9) == null && !user.getUsername().equals(poolTable.getValueAt(row, 10))) {
-					
-					try {
-						Long number = (Long) poolTable.getValueAt(row, 0);
-						DonatePage p = new DonatePage(user, number);
-						p.setVisible(true);
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					if(UserPage.donatePageControl) {
+						try {
+							Long number = (Long) poolTable.getValueAt(row, 0);
+							DonatePage p = new DonatePage(user, number);
+							p.setVisible(true);
+							UserPage.donatePageControl = false;
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
 					}
-					
-					
 					
 				}
 				
@@ -217,14 +231,18 @@ public class UserPage extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				int row = poolTable.getSelectedRow();
 				if(row > -1 && poolTable.getValueAt(row, 10) == null && !user.getUsername().equals(poolTable.getValueAt(row, 9))) {
-					try {
-						Long number = (Long) poolTable.getValueAt(row, 0);
-						GetPage p = new GetPage(user, number);
-						p.setVisible(true);
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					if(UserPage.getPageControl) {
+						try {
+							Long number = (Long) poolTable.getValueAt(row, 0);
+							GetPage p = new GetPage(user, number);
+							p.setVisible(true);
+							UserPage.getPageControl = false;
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
+					
 					
 				}
 			}
@@ -232,24 +250,7 @@ public class UserPage extends JFrame {
 		getButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		getButton.setBounds(114, 530, 102, 29);
 		poolPanel.add(getButton);
-		
-		
-		
-		JButton refreshButton = new JButton("Refresh");
-		refreshButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				try {
-					updatePool();
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
-		refreshButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		refreshButton.setBounds(849, 529, 102, 29);
-		poolPanel.add(refreshButton);
+
 		
 		
 		

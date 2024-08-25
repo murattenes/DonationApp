@@ -111,11 +111,11 @@ public class AdminLoginPage extends JFrame {
 				        Integer dbUserId = rs.getInt("id");
 				        String dbUsername = rs.getString("username");
 				        String dbEmail = rs.getString("email");
-				        String dbPassword = rs.getString("password");
+				        Long dbPassword = rs.getLong("password");
 				        String userType = rs.getString("typename");
 				        String userStatus = rs.getString("statusname");
 				     
-				        if ((inputUsername.equals(dbUsername) || inputUsername.equals(dbEmail)) && inputPassword.equals(dbPassword)) {
+				        if ((inputUsername.equals(dbUsername) || inputUsername.equals(dbEmail)) && inputPassword.hashCode() == dbPassword) {
 				            userFound = true;
 				            
 				            
@@ -134,7 +134,7 @@ public class AdminLoginPage extends JFrame {
 				                	
 				                	
 				                	//LOGIN
-				                    Admin user = new Admin(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("address"), null);
+				                    Admin user = new Admin(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getLong("password"), rs.getString("address"), null);
 				                    AdminPage p = new AdminPage(user);
 				                    p.setVisible(true);
 				                    dispose();

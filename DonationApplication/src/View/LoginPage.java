@@ -85,7 +85,8 @@ public class LoginPage extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				if(usernameField.getText().length() == 0 || passwordField.getPassword().length == 0) {
-					 Message.showMsg("fill"); 	 
+					 Message.showMsg("fill");
+					 System.out.println(usernameField.getText().hashCode());
 				} else {
 					
 					try {
@@ -107,11 +108,11 @@ public class LoginPage extends JFrame {
 					        Integer dbUserId = rs.getInt("id");
 					        String dbUsername = rs.getString("username");
 					        String dbEmail = rs.getString("email");
-					        String dbPassword = rs.getString("password");
+					        Long dbPassword = rs.getLong("password");
 					        String userType = rs.getString("typename");
 					        String userStatus = rs.getString("statusname");
 					     
-					        if ((inputUsername.equals(dbUsername) || inputUsername.equals(dbEmail)) && inputPassword.equals(dbPassword)) {
+					        if ((inputUsername.equals(dbUsername) || inputUsername.equals(dbEmail)) && inputPassword.hashCode() == dbPassword) {
 					            userFound = true;
 					            
 					            
@@ -130,7 +131,7 @@ public class LoginPage extends JFrame {
 					                	
 					                	
 					                	//LOGIN
-					                    User user = new User(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getString("password"), rs.getString("address"), null);
+					                    User user = new User(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getLong("password"), rs.getString("address"), null);
 					                    UserPage p = new UserPage(user);
 					                    p.setVisible(true);
 					                    dispose();

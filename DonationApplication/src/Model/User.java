@@ -10,7 +10,7 @@ public class User{
 	protected String surname;
 	protected String username;
 	protected String email;
-	protected String password;
+	protected Long password;
 	protected String address;
 	protected Integer point;
 	static DataBase con = new DataBase();
@@ -18,7 +18,7 @@ public class User{
 	
 	
 
-	public User(Integer id, String name, String surname, String username, String email, String password, String address, Integer point) {
+	public User(Integer id, String name, String surname, String username, String email, Long password, String address, Integer point) {
 		
 		super();
 		User.id = id;
@@ -97,7 +97,7 @@ public class User{
 
 
 
-	public String getPassword() {
+	public Long getPassword() {
 		return password;
 	}
 	
@@ -116,7 +116,7 @@ public class User{
 
 
 
-	public void setPassword(String password) {
+	public void setPassword(Long password) {
 		this.password = password;
 	}
 	

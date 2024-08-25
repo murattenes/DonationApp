@@ -93,16 +93,16 @@ public class ChangePasswordPage extends JFrame {
 		changeButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				String oldP = new String(oldPasswordField.getPassword());
-				String newP = new String(newPasswordField.getPassword());
-				String renewP = new String(reNewPasswordField.getPassword());
+				Long oldP = (long) new String(oldPasswordField.getPassword()).hashCode();
+				Long newP = (long) new String(newPasswordField.getPassword()).hashCode();
+				Long renewP = (long) new String(reNewPasswordField.getPassword()).hashCode();
 				if(oldPasswordField.getPassword().length == 0 || newPasswordField.getPassword().length == 0 || reNewPasswordField.getPassword().length == 0) {
 					Message.showMsg("fill");
 				}			
-				else if (!newP.equals(renewP)) {
+				else if (newP != renewP) {
 					Message.showMsg("New passwords have to be same.");
 				}
-				else if (newP.equals(oldP)) {
+				else if (newP == oldP) {
 					Message.showMsg("New password cannot be same as old password.");
 				}
 				else {
@@ -111,7 +111,7 @@ public class ChangePasswordPage extends JFrame {
 						Statement st = c.createStatement();
 						String query = "UPDATE users SET password = ? WHERE id = ?";
 						PreparedStatement ps = c.prepareStatement(query);
-						ps.setString(1, new String(newPasswordField.getPassword()));
+						ps.setLong(1, new String(newPasswordField.getPassword()).hashCode());
 						ps.setInt(2, user.getId());
 						ps.executeUpdate();
 						ps.close();

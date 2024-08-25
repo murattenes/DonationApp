@@ -152,7 +152,8 @@ public class RegistrationPage extends JFrame {
 					 
 					 else {
 						try {
-							Admin.addUser(nameField.getText(), surnameField.getText(), usernameField.getText(), emailField.getText(), new String(passwordField.getPassword()), addressTextField.getText());
+							Long passwordHashed = (long) new String(passwordField.getPassword()).hashCode();
+							Admin.addUser(nameField.getText(), surnameField.getText(), usernameField.getText(), emailField.getText(), passwordHashed, addressTextField.getText());
 							
 							LoginPage page = new LoginPage();
 							page.setVisible(true);

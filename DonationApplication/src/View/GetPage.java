@@ -20,6 +20,8 @@ import javax.swing.JButton;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class GetPage extends JFrame {
 
@@ -51,6 +53,13 @@ public class GetPage extends JFrame {
 	 * @throws SQLException 
 	 */
 	public GetPage(User user, Long number) throws SQLException {
+		setTitle("GET PAGE");
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosed(WindowEvent e) {
+				UserPage.getPageControl = true;
+			}
+		});
 		Donation d = Admin.getDonationbyNumber(number);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -98,12 +107,14 @@ public class GetPage extends JFrame {
 						Admin.addToFromDonation(donation.getCategory(), donation.getSubCategory(), donation.getParam1(), donation.getParam2(), donation.getCondition(), spinnerValue, donation.getDonor(), user.getId());
 						Admin.editDonationQuantity(donation.getQuantity() - spinnerValue, number);
 						Admin.inProgressItem(number);
+						Message.showMsg("Process succesful !");
 						dispose();
 					}
 					else if (spinnerValue == donation.getQuantity()) {
 						Admin.addToFromDonation(donation.getCategory(), donation.getSubCategory(), donation.getParam1(), donation.getParam2(), donation.getCondition(), spinnerValue, donation.getDonor(), user.getId());
 						Admin.editDonationQuantity(donation.getQuantity() - spinnerValue, number);
 						Admin.completeItem(number);
+						Message.showMsg("Process succesful !");
 						dispose();
 					}
 					

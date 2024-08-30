@@ -105,8 +105,9 @@ public class AdminPage extends JFrame {
 		dynamicNoTextField = new JTextField();
 		dynamicNoTextField.setEnabled(false);
 		dynamicNoTextField.setEditable(false);
+		dynamicNoTextField.setText("Donation number");
 		dynamicNoTextField.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		dynamicNoTextField.setBounds(0, 538, 130, 26);
+		dynamicNoTextField.setBounds(0, 538, 161, 26);
 		donationsPanel.add(dynamicNoTextField);
 		dynamicNoTextField.setColumns(10);
 		
@@ -131,6 +132,10 @@ public class AdminPage extends JFrame {
 					Long no = (Long) donationsTable.getValueAt(row, 0);
 					dynamicNoTextField.setText(no + "");
 				}
+				else {
+					System.out.println(donationsTable.getSelectedRow());
+				}
+				
 				
 			}
 		});
@@ -159,7 +164,7 @@ public class AdminPage extends JFrame {
 			}
 		});
 		completeButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		completeButton.setBounds(142, 539, 121, 29);
+		completeButton.setBounds(173, 538, 121, 29);
 		donationsPanel.add(completeButton);
 		
 		JButton cancelButton = new JButton("Cancel");
@@ -181,7 +186,7 @@ public class AdminPage extends JFrame {
 			}
 		});
 		cancelButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		cancelButton.setBounds(275, 539, 121, 29);
+		cancelButton.setBounds(306, 538, 121, 29);
 		donationsPanel.add(cancelButton);
 		
 		JPanel usersPanel = new JPanel();
@@ -234,8 +239,8 @@ public class AdminPage extends JFrame {
 		
 
 		
-		JButton inactiveButton = new JButton("Make Inactive");
-		inactiveButton.addMouseListener(new MouseAdapter() {
+		JButton restrictButton = new JButton("Restrict User");
+		restrictButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				int row = usersTable.getSelectedRow();
@@ -251,11 +256,12 @@ public class AdminPage extends JFrame {
 				}
 			}
 		});
-		inactiveButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		inactiveButton.setBounds(142, 539, 155, 29);
-		usersPanel.add(inactiveButton);
+		restrictButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		restrictButton.setBounds(142, 539, 155, 29);
+		usersPanel.add(restrictButton);
 		
-		JButton activeButton = new JButton("Make Active");
+		
+		JButton activeButton = new JButton("Make Active User");
 		activeButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -273,7 +279,7 @@ public class AdminPage extends JFrame {
 			}
 		});
 		activeButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		activeButton.setBounds(309, 539, 155, 29);
+		activeButton.setBounds(309, 539, 184, 29);
 		usersPanel.add(activeButton);
 		
 		JButton btnNewButton = new JButton("Log out");

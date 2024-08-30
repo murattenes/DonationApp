@@ -80,7 +80,7 @@ public class LoginPage extends JFrame {
 		usernameField.setColumns(10);
 		
 		JButton loginButton = new JButton("Login");
-		loginButton.setForeground(new Color(0, 255, 102));
+		loginButton.setForeground(new Color(0, 0, 0));
 		loginButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -153,37 +153,45 @@ public class LoginPage extends JFrame {
 						if (!userFound) {
 					        Message.showMsg("Incorrect username/email or password.");
 					    }
-					
-						
 						st.close();
 						rs.close();
 						c.close();
-						
-						
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
-					
-					
-					
 				}
-				
-				
-				
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				loginButton.setForeground(new Color(0, 255, 102));
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				loginButton.setForeground(new Color(0, 0, 0));
 			}
 		});
 		loginButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		
 		JButton registerButton = new JButton("Register");
-		registerButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		registerButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		registerButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
 				RegistrationPage p = new RegistrationPage();
 				p.setVisible(true);
 				dispose();
 			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				registerButton.setForeground(new Color(0, 255, 102));
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				registerButton.setForeground(new Color(0, 0, 0));
+			}
 		});
+		registerButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		
 		
 		JButton adminLoginButton = new JButton("Admin Login");
 		adminLoginButton.addMouseListener(new MouseAdapter() {
@@ -192,6 +200,14 @@ public class LoginPage extends JFrame {
 				AdminLoginPage p = new AdminLoginPage();
 				p.setVisible(true);
 				dispose();
+			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				adminLoginButton.setForeground(new Color(0, 255, 102));
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				adminLoginButton.setForeground(new Color(0, 0, 0));
 			}
 		});
 		adminLoginButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));

@@ -52,7 +52,6 @@ public class UserPage extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private DefaultTableModel poolTablee;
-	private DefaultTableModel myDonationsTablee;
 	static User user = new User();
 	private JTable poolTable;
 	public static Boolean donateRequestPageControl;

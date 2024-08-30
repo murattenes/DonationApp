@@ -46,7 +46,6 @@ public class Admin extends User{
 	//ADD USER TO DATABASE
 	public static void addUser(String name, String surname, String username, String email, Long password, String address) throws SQLException {
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		
 		String query = "INSERT INTO users(name, surname, username, email, password, type, status, registrationDate, lastLogin, address) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		PreparedStatement ps = c.prepareStatement(query);
@@ -75,7 +74,6 @@ public class Admin extends User{
 	//ADD DONATION TO THE POOL
 	public static void addDonation(int category, String subcategory, String param1, String param2, String condition, int quantity, Integer donor, Integer recipient ) throws SQLException {
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		
 		String query = "INSERT INTO donations(number, category, subcategory, param1, param2, `condition`, quantity, status, donationDate, donor, recipient, isEvaluated) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		PreparedStatement ps = c.prepareStatement(query);
@@ -106,7 +104,6 @@ public class Admin extends User{
 	//ONE USER TO ANOTHER USER USING POOL
 	public static void addToFromDonation(int category, String subcategory, String param1, String param2, String condition, int quantity, Integer donor, Integer recipient ) throws SQLException {
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		
 		String query = "INSERT INTO donations(number, category, subcategory, param1, param2, `condition`, quantity, status, donationDate, donor, recipient) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		PreparedStatement ps = c.prepareStatement(query);
@@ -136,7 +133,6 @@ public class Admin extends User{
 	//ADD REQUEST TO THE POOL
 	public static void requestDonation(int category, String subcategory, String param1, String param2, String condition, int quantity, Integer donor, Integer recipient ) throws SQLException {
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		
 		String query = "INSERT INTO donations(number, category, subcategory, param1, param2, `condition`, quantity, status, donationDate, donor, recipient) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		PreparedStatement ps = c.prepareStatement(query);
@@ -165,7 +161,6 @@ public class Admin extends User{
 	//GET DONATION FROM DATABASE USING DONATION NUMBER
 	public static Donation getDonationbyNumber(Long number) throws SQLException{
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		String query = "SELECT donations.* FROM donations WHERE donations.number = ?";
 		PreparedStatement ps = c.prepareStatement(query);
 		ps.setLong(1, number);
@@ -294,7 +289,6 @@ public class Admin extends User{
 		
 		
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		String query = "SELECT donations.*, donation_status.statusname, donation_categories.categoryname, " +
 					   "donor_user.username AS donorname, "+
 					   "recipient_user.username AS recipientname "+
@@ -335,7 +329,6 @@ public class Admin extends User{
 		
 		
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		String query = "SELECT donations.*, donation_status.statusname, donation_categories.categoryname, " +
 					   "recipient_user.username AS recipientname, "+
 					   "donor_user.username AS donorname "+
@@ -371,7 +364,6 @@ public class Admin extends User{
 	//MAKE ACTIVE STATUS OF DONATION
 	public static void activeItem(Long number) throws SQLException {
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		
 		String query = "UPDATE donations SET donations.status = ? WHERE donations.number = ?";
 		PreparedStatement ps = c.prepareStatement(query);
@@ -384,7 +376,6 @@ public class Admin extends User{
 	//MAKE COMPLETED STATUS OF DONATION
 	public static void completeItem(Long number) throws SQLException {
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		
 		String query = "UPDATE donations SET donations.status = ? WHERE donations.number = ?";
 		PreparedStatement ps = c.prepareStatement(query);
@@ -397,7 +388,6 @@ public class Admin extends User{
 	//MAKE CANCELED STATUS OF DONATION
 	public static void cancelItem(Long number) throws SQLException {
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		
 		String query = "UPDATE donations SET donations.status = ? WHERE donations.number = ?";
 		PreparedStatement ps = c.prepareStatement(query);
@@ -410,7 +400,6 @@ public class Admin extends User{
 	//MAKE INPROGRESS STATUS OF DONATION
 	public static void ongoingItem(Long number) throws SQLException {
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		
 		String query = "UPDATE donations SET donations.status = ? WHERE donations.number = ?";
 		PreparedStatement ps = c.prepareStatement(query);
@@ -423,7 +412,6 @@ public class Admin extends User{
 	//WHEN SOMEONE DONATED LESS THAN NEEDED DECREASE THE NEEDED QUANTITY IN POOL
 	public static void editDonationQuantity(int quantity, Long number) throws SQLException {
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		
 		String query = "UPDATE donations SET donations.quantity = ? WHERE donations.number = ?";
 		PreparedStatement ps = c.prepareStatement(query);
@@ -440,7 +428,6 @@ public class Admin extends User{
 		
 		
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		String query = "SELECT users.*, user_types.typename, user_status.statusname "+
 					   "FROM users "+
 					   "INNER JOIN user_types ON users.type = user_types.id "+
@@ -524,7 +511,6 @@ public class Admin extends User{
 	//MAKE INACTIVE STATUS OF USER. THIS IS FOR ADMIN PAGE
 	public static void makeInactiveUser(String username) throws SQLException {
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		
 		String query = "UPDATE users SET users.status = 2 WHERE users.username = ?";
 		PreparedStatement ps = c.prepareStatement(query);
@@ -539,7 +525,6 @@ public class Admin extends User{
 	//MAKE ACTIVE STATUS OF USER. THIS IS FOR ADMIN PAGE
 	public static void makeActiveUser(String username) throws SQLException {
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		
 		String query = "UPDATE users SET users.status = 1 WHERE users.username = ?";
 		PreparedStatement ps = c.prepareStatement(query);
@@ -574,7 +559,6 @@ public class Admin extends User{
 		
 		
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		String query = "SELECT COUNT(donations.isEvaluated) " +
 					   "FROM donations " +
 					   "INNER JOIN users ON donations.donor = users.id " +
@@ -597,7 +581,6 @@ public class Admin extends User{
 		
 		
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		String query = "SELECT point FROM users WHERE username = ?";
 		PreparedStatement ps = c.prepareStatement(query);
 		ps.setString(1, username);
@@ -618,7 +601,6 @@ public class Admin extends User{
 	}
 	public static void updateUserPoint(String username, Float value) throws SQLException {
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		
 		String query = "UPDATE users SET users.point = ? WHERE users.username = ?";
 		PreparedStatement ps = c.prepareStatement(query);
@@ -634,7 +616,6 @@ public class Admin extends User{
 	
 	public static void updateIsEvaluated(Long no) throws SQLException {
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		
 		String query = "UPDATE donations SET donations.isEvaluated = 1 WHERE donations.number = ?";
 		PreparedStatement ps = c.prepareStatement(query);
@@ -649,7 +630,6 @@ public class Admin extends User{
 	public static Boolean checkIsEvaluated(Long no) throws SQLException {
 		
 		Connection c = con.connect();
-		Statement st = c.createStatement();
 		
 		String query = "SELECT donations.* FROM donations WHERE donations.number = ?";
 		PreparedStatement ps = c.prepareStatement(query);

@@ -1,5 +1,6 @@
 package View;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -61,31 +62,32 @@ public class AdminLoginPage extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 750, 500);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(255, 248, 190));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel usernameLabel = new JLabel("Username or e-mail:");
-		usernameLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		usernameLabel.setBounds(6, 170, 162, 20);
+		JLabel usernameLabel = new JLabel("Username or e-mail");
+		usernameLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 15));
+		usernameLabel.setBounds(307, 135, 162, 20);
 		contentPane.add(usernameLabel);
 		
-		JLabel passwordLabel = new JLabel("Password:");
-		passwordLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		passwordLabel.setBounds(6, 226, 162, 20);
+		JLabel passwordLabel = new JLabel("Password");
+		passwordLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 15));
+		passwordLabel.setBounds(307, 205, 162, 20);
 		contentPane.add(passwordLabel);
 		
 		usernameField = new JTextField();
 		usernameField.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		usernameField.setBounds(180, 167, 130, 26);
+		usernameField.setBounds(307, 167, 130, 26);
 		contentPane.add(usernameField);
 		usernameField.setColumns(10);
 		
 		passwordField = new JPasswordField();
 		passwordField.setColumns(10);
 		passwordField.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		passwordField.setBounds(180, 224, 130, 26);
+		passwordField.setBounds(307, 243, 130, 26);
 		contentPane.add(passwordField);
 		
 		JButton loginButton = new JButton("Login");
@@ -171,9 +173,17 @@ public class AdminLoginPage extends JFrame {
 					e1.printStackTrace();
 				}
 			}
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				loginButton.setForeground(new Color(0, 255, 102));
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				loginButton.setForeground(new Color(0, 0, 0));
+			}
 		});
 		loginButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		loginButton.setBounds(180, 280, 130, 29);
+		loginButton.setBounds(307, 292, 130, 29);
 		contentPane.add(loginButton);
 		
 		JLabel welcomeLabel = new JLabel("Welcome to DONATE APP admin login page");
@@ -182,7 +192,7 @@ public class AdminLoginPage extends JFrame {
 		welcomeLabel.setBounds(0, 0, 750, 50);
 		contentPane.add(welcomeLabel);
 		
-		JButton userLoginPageButton = new JButton("To user login page");
+		JButton userLoginPageButton = new JButton("← User login page");
 		userLoginPageButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -192,7 +202,7 @@ public class AdminLoginPage extends JFrame {
 			}
 		});
 		userLoginPageButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		userLoginPageButton.setBounds(552, 443, 198, 29);
+		userLoginPageButton.setBounds(6, 437, 198, 29);
 		contentPane.add(userLoginPageButton);
 	}
 }

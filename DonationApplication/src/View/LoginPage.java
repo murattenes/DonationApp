@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class LoginPage extends JFrame {
 
@@ -56,6 +57,7 @@ public class LoginPage extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 750, 500);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(255, 248, 190));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
@@ -65,11 +67,11 @@ public class LoginPage extends JFrame {
 		welcomeLabel.setFont(new Font("Lucida Grande", Font.BOLD | Font.ITALIC, 24));
 		welcomeLabel.setAlignmentX(CENTER_ALIGNMENT);
 		
-		JLabel usernameLabel = new JLabel("Username or E-mail:");
-		usernameLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		JLabel usernameLabel = new JLabel("Username or E-mail");
+		usernameLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 14));
 		
-		JLabel passwordLabel = new JLabel("Password:");
-		passwordLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
+		JLabel passwordLabel = new JLabel("Password");
+		passwordLabel.setFont(new Font("Lucida Grande", Font.ITALIC, 14));
 		
 		passwordField = new JPasswordField();
 		passwordField.setColumns(10);
@@ -80,6 +82,10 @@ public class LoginPage extends JFrame {
 		usernameField.setColumns(10);
 		
 		JButton loginButton = new JButton("Login");
+		loginButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
 		loginButton.setForeground(new Color(0, 0, 0));
 		loginButton.addMouseListener(new MouseAdapter() {
 			@Override
@@ -87,7 +93,86 @@ public class LoginPage extends JFrame {
 				if(usernameField.getText().length() == 0 || passwordField.getPassword().length == 0) {
 					 Message.showMsg("fill");
 					 System.out.println(usernameField.getText().hashCode());
-				} else {
+				} 
+				
+				else {
+					String inputUsername = usernameField.getText();
+			        String inputPassword = new String(passwordField.getPassword());
+			        
+			        	//CONNECT TO DB
+						
+						try {
+							Connection c = con.connect();
+							String query = "SELECT users.*, " +
+		                               "user_types.typename, user_status.statusname " +
+		                               "FROM users " +
+		                               "INNER JOIN user_types ON users.type = user_types.id " +
+		                               "INNER JOIN user_status ON users.status = user_status.id "+
+		                               "WHERE users.username = ? OR users.email = ?";
+							
+							PreparedStatement ps = c.prepareStatement(query);
+							ps.setString(1, inputUsername);
+							ps.setString(2, inputUsername);
+							
+							ResultSet rs = ps.executeQuery();
+							
+							if(rs.next()) {
+								Integer dbUserId = rs.getInt("id");
+						        String dbUsername = rs.getString("username");
+						        String dbEmail = rs.getString("email");
+						        Long dbPassword = rs.getLong("password");
+						        String userType = rs.getString("typename");
+						        String userStatus = rs.getString("statusname");
+						        if (inputPassword.hashCode() == dbPassword) {
+						        	
+						        	if ("User".equals(userType)) {
+						                
+						                if ("Active".equals(userStatus)) {
+						                	//UPDATE LAST LOGIN
+						                	String updateQuery = "UPDATE users SET lastLogin = ? WHERE id = ?";
+						                	PreparedStatement pst = c.prepareStatement(updateQuery);
+						                	LocalDateTime time = LocalDateTime.now();
+						                	pst.setTimestamp(1, Timestamp.valueOf(time));
+						                	pst.setInt(2, dbUserId);
+						                	pst.executeUpdate();
+						                	pst.close();
+						                	
+						                	
+						                	//LOGIN
+						                    User user = new User(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("username"), rs.getString("email"), rs.getLong("password"), rs.getString("address"), null);
+						                    UserPage p = new UserPage(user);
+						                    p.setVisible(true);
+						                    dispose();
+						                    
+						                    
+						                } else {
+						                    Message.showMsg("Since your account isn't active, you cannot log in :(");
+						                    
+						                }
+						                
+						            } else {
+						                Message.showMsg("You have to use the admin login page.\nClick the button on the bottom right.");
+						                
+						            }
+						        
+						        }
+						        else {
+						        	Message.showMsg("Incorrect username/email or password.");
+						        }
+							}
+							else {
+								Message.showMsg("Incorrect username/email or password.");
+							}
+									
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						
+			        }
+			        
+			        
+			        /*
 					
 					try {
 						//CONNECT TO DB
@@ -102,9 +187,6 @@ public class LoginPage extends JFrame {
 						boolean userFound = false;
 						while(rs.next()) {
 							//USER'S DATAS
-							String inputUsername = usernameField.getText();
-					        String inputPassword = new String(passwordField.getPassword());
-					        
 					        Integer dbUserId = rs.getInt("id");
 					        String dbUsername = rs.getString("username");
 					        String dbEmail = rs.getString("email");
@@ -143,13 +225,14 @@ public class LoginPage extends JFrame {
 					                }
 					                
 					            } else {
-					                Message.showMsg("You have to use the admin login page.\nClick the button on the top right.");
+					                Message.showMsg("You have to use the admin login page.\nClick the button on the bottom right.");
 					                break;
 					            }
 					        }
 							
 							
 						}
+						
 						if (!userFound) {
 					        Message.showMsg("Incorrect username/email or password.");
 					    }
@@ -160,8 +243,9 @@ public class LoginPage extends JFrame {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+					*/
 				}
-			}
+			
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				loginButton.setForeground(new Color(0, 255, 102));
@@ -173,7 +257,7 @@ public class LoginPage extends JFrame {
 		});
 		loginButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		
-		JButton registerButton = new JButton("Register");
+		JButton registerButton = new JButton("Create an account");
 		registerButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -222,43 +306,39 @@ public class LoginPage extends JFrame {
 					.addComponent(welcomeLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 					.addGap(174))
 				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(usernameLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-							.addGap(18))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(passwordLabel, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-							.addGap(101)))
+					.addGap(284)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING)
-						.addComponent(loginButton, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
-						.addComponent(passwordField, Alignment.LEADING, 159, 159, 159)
-						.addComponent(usernameField, Alignment.LEADING, 159, 159, 159))
-					.addGap(451))
-				.addGroup(gl_contentPane.createSequentialGroup()
-					.addGap(566)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-						.addComponent(adminLoginButton, Alignment.TRAILING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(registerButton, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE))
-					.addContainerGap(49, Short.MAX_VALUE))
+						.addComponent(registerButton, GroupLayout.PREFERRED_SIZE, 175, GroupLayout.PREFERRED_SIZE)
+						.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+							.addComponent(loginButton, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(passwordLabel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(passwordField, Alignment.LEADING)
+							.addComponent(usernameField, Alignment.LEADING)
+							.addComponent(usernameLabel, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)))
+					.addGap(279))
+				.addGroup(Alignment.TRAILING, gl_contentPane.createSequentialGroup()
+					.addContainerGap(593, Short.MAX_VALUE)
+					.addComponent(adminLoginButton, GroupLayout.PREFERRED_SIZE, 135, GroupLayout.PREFERRED_SIZE)
+					.addGap(47))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
 					.addComponent(welcomeLabel, GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
-					.addGap(15)
-					.addComponent(adminLoginButton, GroupLayout.PREFERRED_SIZE, 39, GroupLayout.PREFERRED_SIZE)
-					.addGap(93)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(usernameLabel, GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
-						.addComponent(usernameField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addGap(119)
+					.addComponent(usernameLabel, GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(usernameField, GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(passwordLabel, GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(passwordField, GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
 					.addGap(18)
-					.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
-						.addComponent(passwordLabel, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
-						.addComponent(passwordField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addComponent(loginButton, GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)
 					.addGap(18)
-					.addComponent(loginButton, GroupLayout.PREFERRED_SIZE, 40, GroupLayout.PREFERRED_SIZE)
-					.addGap(106)
-					.addComponent(registerButton, GroupLayout.PREFERRED_SIZE, 43, GroupLayout.PREFERRED_SIZE))
+					.addComponent(registerButton, GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
+					.addGap(31)
+					.addComponent(adminLoginButton, GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE))
 		);
 		contentPane.setLayout(gl_contentPane);
 	}

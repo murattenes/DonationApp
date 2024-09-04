@@ -47,7 +47,7 @@ public class Admin extends User{
 	public static void addUser(String name, String surname, String username, String email, Long password, String address) throws SQLException {
 		Connection c = con.connect();
 		
-		String query = "INSERT INTO users(name, surname, username, email, password, type, status, registrationDate, lastLogin, address) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String query = "INSERT INTO users(name, surname, username, email, password, type, status, registrationDate, lastLogin, address, point) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		PreparedStatement ps = c.prepareStatement(query);
 		
 		ps.setString(1, name);
@@ -63,6 +63,7 @@ public class Admin extends User{
 		ps.setTimestamp(8, Timestamp.valueOf(time));
 		ps.setTimestamp(9, null);
 		ps.setString(10, address);
+		ps.setFloat(11, 0);
 		
 		
 		ps.executeUpdate();
@@ -648,6 +649,43 @@ public class Admin extends User{
 		c.close();
 		
 		return false;
+	}
+	
+	public static Boolean getSpecificUsername(String username) throws SQLException {
+		Connection c = con.connect();
+		String query = "SELECT username FROM users WHERE username = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setString(1, username);
+		
+		ResultSet rs = ps.executeQuery();
+		if(rs.next()) {
+			return true;
+		}
+		
+		
+		rs.close();
+	    ps.close();
+	    c.close();
+		return false;
+		
+	}
+	public static Boolean getSpecificEmail(String email) throws SQLException {
+		Connection c = con.connect();
+		String query = "SELECT email FROM users WHERE email = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setString(1, email);
+		
+		ResultSet rs = ps.executeQuery();
+		if(rs.next()) {
+			return true;
+		}
+		
+		
+		rs.close();
+	    ps.close();
+	    c.close();
+		return false;
+		
 	}
 	
 	

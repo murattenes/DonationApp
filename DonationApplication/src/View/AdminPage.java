@@ -30,6 +30,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
+import java.awt.Color;
 
 public class AdminPage extends JFrame {
 
@@ -72,20 +73,17 @@ public class AdminPage extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 750);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(200, 219, 214));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
-		JLabel photoLabel = new JLabel("PHOTO");
-		photoLabel.setBounds(0, 0, 81, 81);
-		contentPane.add(photoLabel);
-		
 		JLabel welcomeLAbel = new JLabel("New label");
 		welcomeLAbel.setText("Welcome " + admin.getName());
 		welcomeLAbel.setSize(admin.getName().length() * 30, 20);
 		welcomeLAbel.setFont(new Font("Lucida Grande", Font.ITALIC, 16));
-		welcomeLAbel.setLocation(93, 0);
+		welcomeLAbel.setLocation(6, 3);
 		contentPane.add(welcomeLAbel);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);

@@ -49,6 +49,7 @@ public class ProfilePage extends JFrame {
 	private DefaultTableModel myRequestsTablee;
 	private JTable myRequestsTable;
 	static DataBase con = new DataBase();
+	public static Boolean changePasswordPageControl;
 	/**
 	 * Launch the application.
 	 */
@@ -79,10 +80,14 @@ public class ProfilePage extends JFrame {
 			public void windowClosed(WindowEvent e) {
 				UserPage.profilePageControl = true;
 			}
+			public void windowOpened(WindowEvent e) {
+				ProfilePage.changePasswordPageControl = true;
+			}
 		});
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1000, 750);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(200, 219, 214));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
@@ -121,7 +126,7 @@ public class ProfilePage extends JFrame {
 		contentPane.add(dynamicAddressLabel);
 		
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(0, 101, 994, 598);
+		tabbedPane.setBounds(0, 128, 994, 571);
 		contentPane.add(tabbedPane);
 		
 		myDonationsTablee = new NonEditableTableModel();
@@ -334,16 +339,20 @@ public class ProfilePage extends JFrame {
 		cancelButton.setBounds(885, 687, 109, 29);
 		contentPane.add(cancelButton);
 		
-		JButton changePasswordButton = new JButton("Change Password");
+		JButton changePasswordButton = new JButton("Change Password/Address");
 		changePasswordButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				ChangePasswordPage p = new ChangePasswordPage(user);
-				p.setVisible(true);
+				if(ProfilePage.changePasswordPageControl) {
+					ChangePasswordPage p = new ChangePasswordPage(user);
+					p.setVisible(true);
+					ProfilePage.changePasswordPageControl = false;
+				}
+				
 			}
 		});
-		changePasswordButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		changePasswordButton.setBounds(819, 3, 175, 29);
+		changePasswordButton.setFont(new Font("Lucida Grande", Font.BOLD, 14));
+		changePasswordButton.setBounds(0, 102, 237, 29);
 		contentPane.add(changePasswordButton);
 	}
 	public void updateMyDonationsTable() throws SQLException {

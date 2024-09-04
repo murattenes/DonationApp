@@ -432,7 +432,8 @@ public class Admin extends User{
 		String query = "SELECT users.*, user_types.typename, user_status.statusname "+
 					   "FROM users "+
 					   "INNER JOIN user_types ON users.type = user_types.id "+
-					   "INNER JOIN user_status ON users.status = user_status.id";
+					   "INNER JOIN user_status ON users.status = user_status.id "+
+					   "WHERE users.type = 2";
 		PreparedStatement ps = c.prepareStatement(query);
 		ResultSet rs = ps.executeQuery();
 		

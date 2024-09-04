@@ -83,7 +83,7 @@ public class RegistrationPage extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 750, 500);
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(242, 231, 230));
+		contentPane.setBackground(new Color(237, 237, 237));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);

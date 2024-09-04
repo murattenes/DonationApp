@@ -87,7 +87,7 @@ public class ProfilePage extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1000, 750);
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(200, 219, 214));
+		contentPane.setBackground(new Color(237, 237, 237));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);

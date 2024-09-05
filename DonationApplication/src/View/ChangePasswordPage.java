@@ -204,7 +204,7 @@ public class ChangePasswordPage extends JFrame {
 					try {
 						String address = textPane.getText() + ", " + districtsComboBox.getSelectedItem() + ", " + provincesComboBox.getSelectedItem();
 						Connection c = con.connect();
-						String query = "UPDATE users SET password = ? WHERE id = ?";
+						String query = "UPDATE users SET address = ? WHERE id = ?";
 						PreparedStatement ps = c.prepareStatement(query);
 						ps.setString(1, address);
 						ps.setInt(2, user.getId());

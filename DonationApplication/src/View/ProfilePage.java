@@ -161,7 +161,7 @@ public class ProfilePage extends JFrame {
 		myRequestsPanel.setLayout(null);
 		
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(0, 0, 973, 525);
+		scrollPane_1.setBounds(0, 0, 973, 494);
 		myRequestsPanel.add(scrollPane_1);
 
 		
@@ -186,6 +186,8 @@ public class ProfilePage extends JFrame {
 		
 		
 		JButton evaluateButton = new JButton("Evaluate");
+		evaluateButton.setBounds(0, 496, 112, 29);
+		myRequestsPanel.add(evaluateButton);
 		evaluateButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -203,7 +205,15 @@ public class ProfilePage extends JFrame {
 							else {
 								Integer[] lst = {5, 4, 3, 2, 1, 0};
 								Integer chosen = JOptionPane.showInternalOptionDialog(null, "Please evaluate the donation in range 0 - 5", "EVAULATION WINDOW", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, lst, null);
-								Integer value = lst[chosen];
+								Integer value;
+								if (chosen > -1) {
+									value = lst[chosen];
+								}
+								else {
+									value = 0;
+								}
+								
+								
 								
 								
 								Integer evaluateCount = Admin.getEvaluateCount(username);
@@ -232,8 +242,6 @@ public class ProfilePage extends JFrame {
 				
 		}});
 		evaluateButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
-		evaluateButton.setBounds(0, 523, 112, 29);
-		myRequestsPanel.add(evaluateButton);
 		
 		
 		JButton completeButton = new JButton("Complete");
@@ -292,7 +300,7 @@ public class ProfilePage extends JFrame {
 		cancelButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(tabbedPane.getSelectedIndex() == 1 /* MY DONATIONS */) {
+				if(tabbedPane.getSelectedIndex() == 0 /* MY DONATIONS */) {
 					int row = myDonationsTable.getSelectedRow();
 					if("Active".equals(myDonationsTable.getValueAt(row, 8)) || "Ongoing".equals(myDonationsTable.getValueAt(row, 8))) {
 						Long nmb = (Long) myDonationsTable.getValueAt(row, 0);
@@ -313,7 +321,7 @@ public class ProfilePage extends JFrame {
 					}
 					
 				}
-				else if(tabbedPane.getSelectedIndex() == 0 /* MY REQUESTS */) {
+				else if(tabbedPane.getSelectedIndex() == 1 /* MY REQUESTS */) {
 					int row = myRequestsTable.getSelectedRow();
 					if("Active".equals(myRequestsTable.getValueAt(row, 8)) || "Ongoing".equals(myRequestsTable.getValueAt(row, 8))) {
 						Long nmb = (Long) myRequestsTable.getValueAt(row, 0);

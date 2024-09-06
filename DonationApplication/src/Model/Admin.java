@@ -73,10 +73,10 @@ public class Admin extends User{
 		
 	}
 	//ADD DONATION TO THE POOL
-	public static void addDonation(int category, String subcategory, String param1, String param2, String condition, int quantity, Integer donor, Integer recipient ) throws SQLException {
+	public static void addDonation(int category, String subcategory, String param1, String param2, String condition, int quantity, Integer donor, Integer recipient) throws SQLException {
 		Connection c = con.connect();
 		
-		String query = "INSERT INTO donations(number, category, subcategory, param1, param2, `condition`, quantity, status, donationDate, donor, recipient, isEvaluated) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String query = "INSERT INTO donations(number, category, subcategory, param1, param2, `condition`, quantity, status, donationDate, donor, recipient) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		PreparedStatement ps = c.prepareStatement(query);
 		
 		
@@ -93,7 +93,6 @@ public class Admin extends User{
 		ps.setTimestamp(9, Timestamp.valueOf(time));
 		ps.setInt(10, donor);
 		ps.setObject(11, recipient, java.sql.Types.INTEGER);
-		ps.setInt(12, 0);
 		
 		
 		ps.executeUpdate();
@@ -103,7 +102,7 @@ public class Admin extends User{
 	}
 	
 	//ONE USER TO ANOTHER USER USING POOL
-	public static void addToFromDonation(int category, String subcategory, String param1, String param2, String condition, int quantity, Integer donor, Integer recipient ) throws SQLException {
+	public static void addToFromDonation(int category, String subcategory, String param1, String param2, String condition, int quantity, Integer donor, Integer recipient) throws SQLException {
 		Connection c = con.connect();
 		
 		String query = "INSERT INTO donations(number, category, subcategory, param1, param2, `condition`, quantity, status, donationDate, donor, recipient) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -117,12 +116,13 @@ public class Admin extends User{
 		ps.setString(5, param2);
 		ps.setString(6, condition);
 		ps.setInt(7, quantity);
-		ps.setInt(8, 3);
+		ps.setInt(8, 5);
 		
 		LocalDateTime time = LocalDateTime.now();
 		ps.setTimestamp(9, Timestamp.valueOf(time));
 		ps.setInt(10, donor);
 		ps.setInt(11, recipient);
+
 		
 		
 		ps.executeUpdate();
@@ -132,7 +132,7 @@ public class Admin extends User{
 	}
 	
 	//ADD REQUEST TO THE POOL
-	public static void requestDonation(int category, String subcategory, String param1, String param2, String condition, int quantity, Integer donor, Integer recipient ) throws SQLException {
+	public static void requestDonation(int category, String subcategory, String param1, String param2, String condition, int quantity, Integer donor, Integer recipient) throws SQLException {
 		Connection c = con.connect();
 		
 		String query = "INSERT INTO donations(number, category, subcategory, param1, param2, `condition`, quantity, status, donationDate, donor, recipient) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -203,7 +203,8 @@ public class Admin extends User{
 				       "INNER JOIN donation_status ON donations.status = donation_status.id " +
 				       "INNER JOIN donation_categories ON donations.category = donation_categories.id " +
 				       "LEFT JOIN users AS donor_user ON donations.donor = donor_user.id " +
-				       "LEFT JOIN users AS recipient_user ON donations.recipient = recipient_user.id ";
+				       "LEFT JOIN users AS recipient_user ON donations.recipient = recipient_user.id "+
+				       "WHERE donations.quantity > 0";
 			
 		
 		ResultSet rs = st.executeQuery(query);
@@ -298,7 +299,7 @@ public class Admin extends User{
 				       "INNER JOIN donation_categories ON donations.category = donation_categories.id " +
 					   "INNER JOIN users AS donor_user ON donations.donor = donor_user.id " +
 				       "LEFT JOIN users AS recipient_user ON donations.recipient = recipient_user.id "+
-				       "WHERE donations.donor = ?" ;
+				       "WHERE donations.donor = ? AND donations.quantity > 0" ;
 		PreparedStatement ps = c.prepareStatement(query);
 		ps.setInt(1, user.getId());
 		
@@ -338,7 +339,7 @@ public class Admin extends User{
 				       "INNER JOIN donation_categories ON donations.category = donation_categories.id " +
 					   "INNER JOIN users AS recipient_user ON donations.recipient = recipient_user.id " +
 				       "LEFT JOIN users AS donor_user ON donations.donor = donor_user.id "+
-				       "WHERE recipient_user.id = ?" ;
+				       "WHERE donations.recipient = ? AND donations.quantity > 0" ;
 		PreparedStatement ps = c.prepareStatement(query);
 		ps.setInt(1, user.getId());
 		
@@ -361,6 +362,54 @@ public class Admin extends User{
 		}		
 		return list;
 	}
+	
+	//GET WAITING OR SHIPPED DONATIONS USING USER. THIS IS FOR PROFILE PAGE
+	public static ArrayList<Object[]> getInProgressbyUser(User donor) throws SQLException{
+		ArrayList<Object[]> list = new ArrayList<Object[]>();
+
+		
+		
+		Connection c = con.connect();
+		String query = "SELECT donations.*, donation_status.statusname, donation_categories.categoryname, " +
+					   "donor_user.username AS donorname, "+
+					   "recipient_user.username AS recipientname, "+
+					   "recipient_user.address AS address "+
+					   "FROM donations " + 
+					   "INNER JOIN donation_status ON donations.status = donation_status.id " +
+				       "INNER JOIN donation_categories ON donations.category = donation_categories.id " +
+					   "LEFT JOIN users AS donor_user ON donations.donor = donor_user.id " +
+				       "LEFT JOIN users AS recipient_user ON donations.recipient = recipient_user.id "+
+				       "WHERE (donations.donor = ? OR donations.recipient = ?) AND donations.quantity > 0 AND (donations.status = 5 OR donations.status = 6)" ;
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setInt(1, donor.getId());
+		ps.setInt(2, donor.getId());
+		
+		
+		ResultSet rs = ps.executeQuery();
+		while(rs.next()) {
+			Object[] items = new Object[13];
+			items[0] = rs.getLong("number");
+			items[1] = rs.getString("categoryname");
+			items[2] = rs.getString("subcategory");
+			items[3] = rs.getString("param1");
+			items[4] = rs.getString("param2");
+			items[5] = rs.getString("condition");
+			items[6] = rs.getInt("quantity");
+			items[7] = rs.getDate("donationDate");
+			items[8] = rs.getString("statusname");
+			items[9] = rs.getString("donorname");
+			items[10] = rs.getString("recipientname");
+			items[11] = rs.getString("address");
+			items[12] = rs.getString("cargoNumber");
+			
+			list.add(items);
+		}		
+		return list;
+	}
+	
+	
+	
+	
 	
 	//MAKE ACTIVE STATUS OF DONATION
 	public static void activeItem(Long number) throws SQLException {
@@ -409,6 +458,28 @@ public class Admin extends User{
 		ps.executeUpdate();
 		
 	}
+	//MAKE IN CARGO STATUS OF DONATION
+	public static void shipItem(Long number) throws SQLException {
+		Connection c = con.connect();
+		
+		String query = "UPDATE donations SET donations.status = ? WHERE donations.number = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setInt(1, 6);
+		ps.setLong(2, number);
+		ps.executeUpdate();
+		
+	}
+	//MAKE WAITING STATUS OF DONATION
+	public static void waitItem(Long number) throws SQLException {
+		Connection c = con.connect();
+		
+		String query = "UPDATE donations SET donations.status = ? WHERE donations.number = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setInt(1, 5);
+		ps.setLong(2, number);
+		ps.executeUpdate();
+		
+	}
 	
 	//WHEN SOMEONE DONATED LESS THAN NEEDED DECREASE THE NEEDED QUANTITY IN POOL
 	public static void editDonationQuantity(int quantity, Long number) throws SQLException {
@@ -421,6 +492,18 @@ public class Admin extends User{
 		ps.executeUpdate();
 		
 	}
+	//WHEN SOMEONE DONATED LESS THAN NEEDED DECREASE THE NEEDED QUANTITY IN POOL
+	public static void editDonationCargoNumber(String cargo, Long number) throws SQLException {
+		Connection c = con.connect();
+		
+		String query = "UPDATE donations SET donations.cargoNumber = ? WHERE donations.number = ?";
+		PreparedStatement ps = c.prepareStatement(query);
+		ps.setString(1, cargo);
+		ps.setLong(2, number);
+		ps.executeUpdate();
+		
+	}
+	
 	
 	//GET ALL USERS FROM DATABASE. THIS IS FOR ADMIN PAGE
 	public static ArrayList<Object[]> getAllUsers() throws SQLException, ParseException {

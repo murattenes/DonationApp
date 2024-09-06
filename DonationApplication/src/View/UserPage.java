@@ -18,6 +18,7 @@ import javax.swing.table.TableRowSorter;
 import Helper.Message;
 import Helper.MyComparator;
 import Helper.NonEditableTableModel;
+import Helper.SetColumnWidth;
 import Model.Admin;
 import Model.Donation;
 import Model.User;
@@ -136,12 +137,13 @@ public class UserPage extends JFrame {
 		poolTable = new JTable(poolTablee);
 		poolTable.setFocusable(false);
 		poolTable.setAutoCreateRowSorter(true);
+		SetColumnWidth.columnWidth(poolTable, 90);
 		
 		DefaultRowSorter<?, ?> sorter = (DefaultRowSorter<?, ?>) poolTable.getRowSorter();
 		sorter.setComparator(6, MyComparator.compInteger);
 		
 		scrollPane.setViewportView(poolTable);
-		//poolTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		poolTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
 		
 		JLabel welcomeLabel = new JLabel();

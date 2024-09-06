@@ -11,6 +11,7 @@ import Helper.DataBase;
 import Helper.Message;
 import Helper.MyComparator;
 import Helper.NonEditableTableModel;
+import Helper.SetColumnWidth;
 import Model.Admin;
 import Model.User;
 import javax.swing.JLabel;
@@ -50,6 +51,8 @@ public class ProfilePage extends JFrame {
 	private JTable myRequestsTable;
 	static DataBase con = new DataBase();
 	public static Boolean changePasswordPageControl;
+	private JTable inProgressTable;
+	private DefaultTableModel inProgressTablee;
 	/**
 	 * Launch the application.
 	 */
@@ -138,7 +141,6 @@ public class ProfilePage extends JFrame {
 		for (Object[] row : lst) {
 			myDonationsTablee.addRow(row);
 		}
-		//myRequestsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
 		JPanel myDonationsPanel = new JPanel();
 		tabbedPane.addTab("My Donations", null, myDonationsPanel, null);
@@ -150,6 +152,9 @@ public class ProfilePage extends JFrame {
 		myDonationsTable = new JTable(myDonationsTablee);
 		myDonationsTable.setFocusable(false);
 		myDonationsTable.setAutoCreateRowSorter(true);
+		
+		SetColumnWidth.columnWidth(myDonationsTable, 90);
+		myDonationsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
 		DefaultRowSorter<?, ?> donationsTableSorter = (DefaultRowSorter<?, ?>) myDonationsTable.getRowSorter();
 		donationsTableSorter.setComparator(6, MyComparator.compInteger);
@@ -181,8 +186,13 @@ public class ProfilePage extends JFrame {
 		DefaultRowSorter<?, ?> requestsTableSorter = (DefaultRowSorter<?, ?>) myDonationsTable.getRowSorter();
 		requestsTableSorter.setComparator(6, MyComparator.compInteger);
 		
+		SetColumnWidth.columnWidth(myRequestsTable, 90);
+		myRequestsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		
 		scrollPane_1.setViewportView(myRequestsTable);
-		//myDonationsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		
+		
+		
 		
 		
 		JButton evaluateButton = new JButton("Evaluate");
@@ -212,17 +222,8 @@ public class ProfilePage extends JFrame {
 								else {
 									value = 0;
 								}
-								
-								
-								
-								
 								Integer evaluateCount = Admin.getEvaluateCount(username);
 								Float point = Admin.getUserPoint(username);
-								
-								System.out.println(evaluateCount);
-								System.out.println(point);
-								
-								
 								Float calculated = ((evaluateCount * point) + value ) / (evaluateCount + 1);
 								
 								Admin.updateIsEvaluated(number);
@@ -233,15 +234,78 @@ public class ProfilePage extends JFrame {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-						
-						
 					}
 				}
-				
-				
-				
 		}});
 		evaluateButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		
+		JPanel inProgressPanel = new JPanel();
+		tabbedPane.addTab("In Progress", null, inProgressPanel, null);
+		inProgressPanel.setLayout(null);
+		
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBounds(0, 0, 973, 493);
+		inProgressPanel.add(scrollPane_2);
+		
+		inProgressTablee = new NonEditableTableModel();
+		String[] columnNamesInProgress = new String[] {
+			    "No", "Category", "Subcategory", "Feature1", "Feature2", "Condition", 
+			    "Quantity", "Date", "Status", "Donor", "Recipient","Address", "Cargo Number"};
+		inProgressTablee.setColumnIdentifiers(columnNamesInProgress);
+		ArrayList<Object[]> lste = Admin.getInProgressbyUser(user);
+		for (Object[] row : lste) {
+			inProgressTablee.addRow(row);
+		}
+		
+		inProgressTable = new JTable(inProgressTablee);
+		inProgressTable.setFocusable(false);
+		inProgressTable.setAutoCreateRowSorter(true);
+		
+		DefaultRowSorter<?, ?> inProgressTableSorter = (DefaultRowSorter<?, ?>) myDonationsTable.getRowSorter();
+		inProgressTableSorter.setComparator(6, MyComparator.compInteger);
+		
+		SetColumnWidth.columnWidth(inProgressTable, 90);
+		inProgressTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		
+		scrollPane_2.setViewportView(inProgressTable);
+		
+		JButton shipButton = new JButton("Ship");
+		shipButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row = inProgressTable.getSelectedRow();
+				if (row > -1) {
+					Long number = (Long) inProgressTable.getValueAt(row, 0);
+					String status = (String) inProgressTable.getValueAt(row, 8);
+					String donor = (String) inProgressTable.getValueAt(row, 9);
+					String recipient = (String) inProgressTable.getValueAt(row, 10);
+					if (donor.equals(user.getUsername())) {
+						if(status.equals("In cargo")) {
+							Message.showMsg("It is already shipped.");
+						}
+						else {
+							String pane = JOptionPane.showInputDialog(null, "Please ente the cargo number", "Cargo Number", JOptionPane.PLAIN_MESSAGE);
+							if(pane != null) {
+								try {
+									Admin.editDonationCargoNumber(pane, number);
+									Admin.shipItem(number);
+									updateInProgressTable();
+								} catch (SQLException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+							}
+						}
+					}
+					else if(recipient.equals(user.getUsername())) {
+						Message.showMsg("Since you are recipient you cannot ship the donation.");
+					}
+				}
+			}
+		});
+		shipButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
+		shipButton.setBounds(0, 496, 117, 29);
+		inProgressPanel.add(shipButton);
 		
 		
 		JButton completeButton = new JButton("Complete");
@@ -379,7 +443,13 @@ public class ProfilePage extends JFrame {
 			myRequestsTablee.addRow(row);
 		}
 	}
-	
-	
+	public void updateInProgressTable() throws SQLException {
+		NonEditableTableModel clear = (NonEditableTableModel) inProgressTable.getModel();
+		clear.setRowCount(0);
+		ArrayList<Object[]> lst = Admin.getInProgressbyUser(user);
+		for (Object[] row : lst) {
+			inProgressTablee.addRow(row);
+		}
+	}
 }
 

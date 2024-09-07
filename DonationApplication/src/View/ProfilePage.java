@@ -90,7 +90,7 @@ public class ProfilePage extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1000, 750);
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(237, 237, 237));
+		contentPane.setBackground(new Color(166, 143, 151));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
@@ -143,13 +143,16 @@ public class ProfilePage extends JFrame {
 		}
 		
 		JPanel myDonationsPanel = new JPanel();
+		myDonationsPanel.setBackground(new Color(166, 143, 151));
 		tabbedPane.addTab("My Donations", null, myDonationsPanel, null);
 		myDonationsPanel.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBackground(new Color(166, 143, 151));
 		scrollPane.setBounds(0, 0, 973, 552);
 		myDonationsPanel.add(scrollPane);
 		myDonationsTable = new JTable(myDonationsTablee);
+		myDonationsTable.setBackground(new Color(255, 255, 255));
 		myDonationsTable.setFocusable(false);
 		myDonationsTable.setAutoCreateRowSorter(true);
 		
@@ -162,6 +165,7 @@ public class ProfilePage extends JFrame {
 		
 		
 		JPanel myRequestsPanel = new JPanel();
+		myRequestsPanel.setBackground(new Color(166, 143, 151));
 		tabbedPane.addTab("My Requests", null, myRequestsPanel, null);
 		myRequestsPanel.setLayout(null);
 		
@@ -201,7 +205,6 @@ public class ProfilePage extends JFrame {
 		evaluateButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
 				int row = myRequestsTable.getSelectedRow();
 				if(row > -1) {
 					if("Completed".equals(myRequestsTable.getValueAt(row, 8))) {
@@ -235,11 +238,15 @@ public class ProfilePage extends JFrame {
 							e1.printStackTrace();
 						}
 					}
+					else {
+						Message.showMsg("Donation hasn't completed.");
+					}
 				}
 		}});
 		evaluateButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		
 		JPanel inProgressPanel = new JPanel();
+		inProgressPanel.setBackground(new Color(166, 143, 151));
 		tabbedPane.addTab("In Progress", null, inProgressPanel, null);
 		inProgressPanel.setLayout(null);
 		
@@ -250,7 +257,7 @@ public class ProfilePage extends JFrame {
 		inProgressTablee = new NonEditableTableModel();
 		String[] columnNamesInProgress = new String[] {
 			    "No", "Category", "Subcategory", "Feature1", "Feature2", "Condition", 
-			    "Quantity", "Date", "Status", "Donor", "Recipient","Address", "Cargo Number"};
+			    "Quantity", "Date", "Status", "Donor", "Recipient", "Address", "Cargo Number"};
 		inProgressTablee.setColumnIdentifiers(columnNamesInProgress);
 		ArrayList<Object[]> lste = Admin.getInProgressbyUser(user);
 		for (Object[] row : lste) {
@@ -287,6 +294,7 @@ public class ProfilePage extends JFrame {
 							String pane = JOptionPane.showInputDialog(null, "Please ente the cargo number", "Cargo Number", JOptionPane.PLAIN_MESSAGE);
 							if(pane != null) {
 								try {
+									Message.showMsg("Shipped successfully.");
 									Admin.editDonationCargoNumber(pane, number);
 									Admin.shipItem(number);
 									updateInProgressTable();
@@ -309,6 +317,7 @@ public class ProfilePage extends JFrame {
 		
 		
 		JButton completeButton = new JButton("Complete");
+		completeButton.setForeground(new Color(0, 0, 0));
 		completeButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -353,6 +362,41 @@ public class ProfilePage extends JFrame {
 						Message.showMsg("Donation cancelled already.");
 					}
 				}
+				else if(tabbedPane.getSelectedIndex() == 2 /* IN PROGRESS */) {
+					int row = inProgressTable.getSelectedRow();
+					Long nmb = (Long) inProgressTable.getValueAt(row, 0);
+					if(row > -1 && "Waiting".equals(inProgressTable.getValueAt(row, 8))) {
+						if(user.getUsername().equals(inProgressTable.getValueAt(row, 9))) { //IF USER IS DONOR
+							Message.showMsg("You have to ship the item to complete it or you can cancel it.");
+						}
+						else if(user.getUsername().equals(inProgressTable.getValueAt(row, 10))) { //IF USER IS RECIPIENT
+							try {
+								Admin.completeItem(nmb);
+								Message.showMsg("Donation completed.");
+								updateInProgressTable();
+							} catch (SQLException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+					}
+					else if(row > -1 && "In cargo".equals(inProgressTable.getValueAt(row, 8))) {
+						if(user.getUsername().equals(inProgressTable.getValueAt(row, 9))) { //IF USER IS DONOR
+							Message.showMsg("When recipient got the donation he/she can mark as completed.");
+						}
+						else if(user.getUsername().equals(inProgressTable.getValueAt(row, 10))) { //IF USER IS RECIPIENT
+							try {
+								Admin.completeItem(nmb);
+								Message.showMsg("Donation completed.");
+								updateInProgressTable();
+							} catch (SQLException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+						
+					}
+				}
 				
 			}
 		});
@@ -361,6 +405,7 @@ public class ProfilePage extends JFrame {
 		contentPane.add(completeButton);
 		
 		JButton cancelButton = new JButton("Cancel");
+		cancelButton.setForeground(new Color(0, 0, 0));
 		cancelButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -405,6 +450,23 @@ public class ProfilePage extends JFrame {
 						Message.showMsg("Donation cancelled already.");
 					}
 				}
+				else if(tabbedPane.getSelectedIndex() == 2 /* IN PROGRESS */) {
+					int row = inProgressTable.getSelectedRow();
+					Long nmb = (Long) inProgressTable.getValueAt(row, 0);
+					if(row > -1 && "In cargo".equals(inProgressTable.getValueAt(row, 8))) {
+						Message.showMsg("Since it is shipped you cannot cancel it.");
+					}
+					else if(row > -1 && "Waiting".equals(inProgressTable.getValueAt(row, 8))) {
+						try {
+							Admin.cancelItem(nmb);
+							Message.showMsg("Donation canceled.");
+							updateInProgressTable();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+				}
 			}
 		});
 		cancelButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
@@ -412,6 +474,7 @@ public class ProfilePage extends JFrame {
 		contentPane.add(cancelButton);
 		
 		JButton changePasswordButton = new JButton("Change Password/Address");
+		changePasswordButton.setForeground(new Color(0, 0, 0));
 		changePasswordButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {

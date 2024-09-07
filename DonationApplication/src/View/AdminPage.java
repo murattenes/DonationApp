@@ -73,7 +73,7 @@ public class AdminPage extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 750);
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(237, 237, 237));
+		contentPane.setBackground(new Color(204, 255, 204));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
@@ -91,6 +91,7 @@ public class AdminPage extends JFrame {
 		contentPane.add(tabbedPane);
 		
 		JPanel donationsPanel = new JPanel();
+		donationsPanel.setBackground(new Color(204, 255, 204));
 		tabbedPane.addTab("All Donations", null, donationsPanel, null);
 		donationsPanel.setLayout(null);
 		
@@ -150,14 +151,24 @@ public class AdminPage extends JFrame {
 				int row = donationsTable.getSelectedRow();
 				if(row > -1) {
 					Long number = (Long) donationsTable.getValueAt(row, 0);
-					try {
-						Admin.completeItem(number);
-						Message.showMsg("Completed!");
-						updateDonationsTable();
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					String status = (String) donationsTable.getValueAt(row, 8);
+					if(status.equals("Waiting") || status.equals("In cargo") || status.equals("Active") || status.equals("Ongoing")) {
+						try {
+							Admin.completeItem(number);
+							Message.showMsg("Completed");
+							updateDonationsTable();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
+					else if(status.equals("Completed")) {
+						Message.showMsg("Completed already");
+					}
+					else if(status.equals("Canceled")) {
+						Message.showMsg("Canceled already");
+					}
+					
 				}
 			}
 		});
@@ -171,15 +182,28 @@ public class AdminPage extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				int row = donationsTable.getSelectedRow();
 				if(row > -1) {
+					String status = (String) donationsTable.getValueAt(row, 8);
 					Long number = (Long) donationsTable.getValueAt(row, 0);
-					try {
-						Admin.cancelItem(number);
-						Message.showMsg("Canceled!");
-						updateDonationsTable();
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					if (status.equals("Waiting") || status.equals("Active") || status.equals("Ongoing")) {
+						try {
+							Admin.cancelItem(number);
+							Message.showMsg("Canceled!");
+							updateDonationsTable();
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
 					}
+					else if (status.equals("In cargo")) {
+						Message.showMsg("Donation shipped already.\n It cannot be canceled");
+					}
+					else if (status.equals("Canceled")) {
+						Message.showMsg("Canceled already");
+					}
+					else if (status.equals("Completed")) {
+						Message.showMsg("Completed already");
+					}
+					
 				}
 			}
 		});
@@ -188,6 +212,7 @@ public class AdminPage extends JFrame {
 		donationsPanel.add(cancelButton);
 		
 		JPanel usersPanel = new JPanel();
+		usersPanel.setBackground(new Color(204, 255, 204));
 		tabbedPane.addTab("All users", null, usersPanel, null);
 		usersPanel.setLayout(null);
 		
@@ -246,6 +271,7 @@ public class AdminPage extends JFrame {
 					try {
 						String username = (String) usersTable.getValueAt(row, 2);
 						Admin.makeInactiveUser(username);
+						Message.showMsg("User restricted");
 						updateUsersTable();
 					} catch (SQLException | ParseException e1) {
 						// TODO Auto-generated catch block
@@ -268,6 +294,7 @@ public class AdminPage extends JFrame {
 					try {
 						String username = (String) usersTable.getValueAt(row, 2);
 						Admin.makeActiveUser(username);
+						Message.showMsg("User activated");
 						updateUsersTable();
 					} catch (SQLException | ParseException e1) {
 						// TODO Auto-generated catch block

@@ -107,7 +107,7 @@ public class UserPage extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 1000, 750);
 		contentPane = new JPanel();
-		contentPane.setBackground(new Color(237, 237, 237));
+		contentPane.setBackground(new Color(204, 255, 204));
 		contentPane.setForeground(new Color(0, 0, 0));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -117,7 +117,10 @@ public class UserPage extends JFrame {
 		tabbedPane.setBackground(new Color(238, 238, 238));
 		
 		JPanel poolPanel = new JPanel();
+		poolPanel.setForeground(new Color(0, 0, 0));
+		poolPanel.setBackground(new Color(204, 255, 204));
 		tabbedPane.addTab("Pool", null, poolPanel, null);
+		
 		
 		poolTablee = new NonEditableTableModel();
 		String[] columnNames = new String[] {
@@ -132,9 +135,11 @@ public class UserPage extends JFrame {
 
 		poolPanel.setLayout(null);
 		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBackground(new Color(204, 255, 204));
 		scrollPane.setBounds(0, 0, 957, 525);
 		poolPanel.add(scrollPane);
 		poolTable = new JTable(poolTablee);
+		poolTable.setBackground(new Color(255, 255, 255));
 		poolTable.setFocusable(false);
 		poolTable.setAutoCreateRowSorter(true);
 		SetColumnWidth.columnWidth(poolTable, 90);
@@ -151,6 +156,7 @@ public class UserPage extends JFrame {
 		welcomeLabel.setText("Welcome " + user.getName());
 		
 		JButton logoutButton = new JButton("Log out");
+		logoutButton.setForeground(new Color(0, 0, 0));
 		logoutButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -170,6 +176,7 @@ public class UserPage extends JFrame {
 		logoutButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		
 		JButton profileButton = new JButton("Profile");
+		profileButton.setForeground(new Color(0, 0, 0));
 		profileButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -190,8 +197,33 @@ public class UserPage extends JFrame {
 		profileButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		
 		
+		JButton getButton = new JButton("Receive donation");
+		getButton.setForeground(new Color(0, 0, 0));
+		getButton.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row = poolTable.getSelectedRow();
+				if(row > -1 && poolTable.getValueAt(row, 10) == null && !user.getUsername().equals(poolTable.getValueAt(row, 9))) {
+					if(UserPage.getPageControl) {
+						try {
+							Long number = (Long) poolTable.getValueAt(row, 0);
+							GetPage p = new GetPage(user, number);
+							p.setVisible(true);
+							UserPage.getPageControl = false;
+						} catch (SQLException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					
+					
+				}
+			}
+		});
+		
+		
 		JButton donateButton = new JButton("Meet the request");
-		donateButton.setOpaque(true);
+		donateButton.setForeground(new Color(0, 0, 0));
 		donateButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -217,35 +249,12 @@ public class UserPage extends JFrame {
 		donateButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		donateButton.setBounds(0, 529, 181, 29);
 		poolPanel.add(donateButton);
-		
-		
-		JButton getButton = new JButton("Receive donation");
-		getButton.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				int row = poolTable.getSelectedRow();
-				if(row > -1 && poolTable.getValueAt(row, 10) == null && !user.getUsername().equals(poolTable.getValueAt(row, 9))) {
-					if(UserPage.getPageControl) {
-						try {
-							Long number = (Long) poolTable.getValueAt(row, 0);
-							GetPage p = new GetPage(user, number);
-							p.setVisible(true);
-							UserPage.getPageControl = false;
-						} catch (SQLException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-					}
-					
-					
-				}
-			}
-		});
 		getButton.setFont(new Font("Lucida Grande", Font.BOLD, 16));
 		getButton.setBounds(193, 529, 183, 29);
 		poolPanel.add(getButton);
 		
 		JButton donateRequestButton = new JButton("Donate/Request");
+		donateRequestButton.setForeground(new Color(0, 0, 0));
 		donateRequestButton.setBounds(799, 529, 158, 29);
 		poolPanel.add(donateRequestButton);
 		donateRequestButton.addMouseListener(new MouseAdapter() {

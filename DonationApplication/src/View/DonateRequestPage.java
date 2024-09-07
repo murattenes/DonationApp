@@ -33,6 +33,7 @@ import javax.swing.JSpinner;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Window.Type;
+import java.awt.Color;
 
 public class DonateRequestPage extends JFrame {
 
@@ -72,6 +73,7 @@ public class DonateRequestPage extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 600, 450);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(255, 169, 185));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);

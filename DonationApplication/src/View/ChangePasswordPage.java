@@ -30,6 +30,7 @@ import javax.swing.JComboBox;
 import javax.swing.JTextPane;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.Color;
 
 public class ChangePasswordPage extends JFrame {
 
@@ -71,6 +72,7 @@ public class ChangePasswordPage extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 700, 450);
 		contentPane = new JPanel();
+		contentPane.setBackground(new Color(255, 169, 185));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
